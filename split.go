@@ -9,6 +9,12 @@ import (
 	"strconv"
 )
 
+const (
+	tooBigFileNumberErrorMsg = "fileNumber is too big"
+	negativeDigitErrorMsg    = "digit is negative"
+	negativeFileNumberErrorMsg    = "fileNumber is negative"
+)
+
 func main() {
 	flag.Parse()
 	fmt.Println(flag.Args())
@@ -70,12 +76,15 @@ func main() {
 }
 
 func createAlphabetFileName(digit int, fileNumber int) (string,error) {
-	if (digit<0 || fileNumber<0){
-		return "",fmt.Errorf("digit or fileNumber is negative")
+	if (digit<1){
+		return "",fmt.Errorf(negativeDigitErrorMsg)
+	}
+	if (fileNumber<0){
+		return "",fmt.Errorf(negativeFileNumberErrorMsg)
 	}
 	var fileName string
 	if (math.Pow(26, float64(digit))<=float64(fileNumber)){
-		return "",fmt.Errorf("fileNumber is too big")
+		return "",fmt.Errorf(tooBigFileNumberErrorMsg)
 	}
 	for i := 0; i < digit; i++ {
 		remainder := fileNumber % 26
@@ -87,11 +96,14 @@ func createAlphabetFileName(digit int, fileNumber int) (string,error) {
 }
 
 func createNumericFileName(digit int, fileNumber int) (string,error) {
-	if (digit<0 || fileNumber<0){
-		return "",fmt.Errorf("digit or fileNumber is negative")
+	if (digit<1){
+		return "",fmt.Errorf(negativeDigitErrorMsg)
+	}
+	if (fileNumber<0){
+		return "",fmt.Errorf(negativeFileNumberErrorMsg)
 	}
 	if (math.Pow(10, float64(digit))<=float64(fileNumber)){
-		return "",fmt.Errorf("fileNumber is too big")
+		return "",fmt.Errorf(tooBigFileNumberErrorMsg)
 	}
 	var fileName string
 	for i := 0; i < digit; i++ {
