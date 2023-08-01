@@ -89,6 +89,9 @@ func createNumericFileName(digit int, fileNumber int) (string,error) {
 	if (digit<0 || fileNumber<0){
 		return "",fmt.Errorf("digit or fileNumber is negative")
 	}
+	if (math.Pow(10, float64(digit))<=float64(fileNumber)){
+		return "",fmt.Errorf("fileNumber is too big")
+	}
 	var fileName string
 	for i := 0; i < digit; i++ {
 		fileName = strconv.Itoa(fileNumber%10) + fileName
