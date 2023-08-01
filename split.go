@@ -1,18 +1,23 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
+	"math"
 	"os"
+	"strconv"
 )
 
 func main() {
-	if len(os.Args) != 2 {
+	flag.Parse()
+	fmt.Println(flag.Args())
+	if len(flag.Args()) != 1 {
 		fmt.Fprintf(os.Stderr, "Usage: %s <filename>\n", os.Args[0])
 		os.Exit(1)
 	}
 
-	filename := os.Args[1]
+	filename := flag.Args()[0]
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -63,3 +68,32 @@ func main() {
 		os.Exit(1)
 	}
 }
+
+func createAlphabetFileName(digit int, fileNumber int) (string,error) {
+	if (digit<0 || fileNumber<0){
+		return "",fmt.Errorf("digit or fileNumber is negative")
+	}
+	var fileName string
+	if (math.Pow(26, float64(digit))<=float64(fileNumber)){
+		return "",fmt.Errorf("fileNumber is too big")
+	}
+	for i := 0; i < digit; i++ {
+		remainder := fileNumber % 26
+		fileName = string(rune(remainder + 97)) + fileName
+		fileNumber = fileNumber / 26
+	}
+	return fileName,nil
+}
+
+func createNumericFileName(digit int, fileNumber int) (string,error) {
+	if (digit<0 || fileNumber<0){
+		return "",fmt.Errorf("digit or fileNumber is negative")
+	}
+	var fileName string
+	for i := 0; i < digit; i++ {
+		fileName = strconv.Itoa(fileNumber%10) + fileName
+		fileNumber = fileNumber / 10
+	}
+	return fileName,nil
+}
+
