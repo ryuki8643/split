@@ -82,6 +82,7 @@ func createAlphabetFileName(digit int, fileNumber int) (string,error) {
 		fileName = string(rune(remainder + 97)) + fileName
 		fileNumber = fileNumber / 26
 	}
+	fileName = "x" + fileName
 	return fileName,nil
 }
 
@@ -97,6 +98,7 @@ func createNumericFileName(digit int, fileNumber int) (string,error) {
 		fileName = strconv.Itoa(fileNumber%10) + fileName
 		fileNumber = fileNumber / 10
 	}
+	fileName = "x" + fileName
 	return fileName,nil
 }
 
