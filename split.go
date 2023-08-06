@@ -11,6 +11,11 @@ const (
 	tooBigFileNumberErrorMsg = "fileNumber is too big"
 	negativeDigitErrorMsg    = "digit is negative"
 	negativeFileNumberErrorMsg    = "fileNumber is negative"
+
+	maxMemoryLimitExceededErrorMsg = "memory limit exceeded"
+	createFileErrorMsg = "failed to create the output file:%w"
+	fileWriteErrorMsg = "failed to write to the output file:%w"
+	fileReadErrorMsg = "failed to read from the input file:%w"
 )
 
 func main() {
