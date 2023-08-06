@@ -1,18 +1,27 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"os"
 )
 
+const (
+	tooBigFileNumberErrorMsg = "fileNumber is too big"
+	negativeDigitErrorMsg    = "digit is negative"
+	negativeFileNumberErrorMsg    = "fileNumber is negative"
+)
+
 func main() {
-	if len(os.Args) != 2 {
+	flag.Parse()
+	fmt.Println(flag.Args())
+	if len(flag.Args()) != 1 {
 		fmt.Fprintf(os.Stderr, "Usage: %s <filename>\n", os.Args[0])
 		os.Exit(1)
 	}
 
-	filename := os.Args[1]
+	filename := flag.Args()[0]
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -63,3 +72,4 @@ func main() {
 		os.Exit(1)
 	}
 }
+
