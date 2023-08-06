@@ -14,7 +14,7 @@ func TestLineFileSplitter_Split_1000Lines(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	// Create a LineFileSplitter instance.
-	splitter := LineFileSplitter{}
+	splitter := LineFileSplitter{1000}
 
 	// Create a test file with 2000 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
@@ -32,7 +32,7 @@ func TestLineFileSplitter_Split_1000Lines(t *testing.T) {
 	}
 
 	// Call the Split function with the mock fileNameCreater.
-	err = splitter.Split(testFile, fileNameCreater, 1000)
+	err = splitter.Split(testFile, fileNameCreater)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -97,7 +97,7 @@ func TestLineFileSplitter_Split_500Lines(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	// Create a LineFileSplitter instance.
-	splitter := LineFileSplitter{}
+	splitter := LineFileSplitter{500}
 
 	// Create a test file with 2000 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
@@ -115,7 +115,7 @@ func TestLineFileSplitter_Split_500Lines(t *testing.T) {
 	}
 
 	// Call the Split function with the mock fileNameCreater.
-	err = splitter.Split(testFile, fileNameCreater, 500)
+	err = splitter.Split(testFile, fileNameCreater)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -145,7 +145,7 @@ func TestLineFileSplitter_Split_500Lines(t *testing.T) {
 	if countLines(output2) != 216 {
 		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLines(output2))
 	}
-	
+
 	if countFiles() != 2 {
 		t.Fatal("Incorrect number of output files.")
 	}
@@ -172,7 +172,7 @@ func TestLineFileSplitter_Split_WithEmptyFile(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	// Create a LineFileSplitter instance.
-	splitter := LineFileSplitter{}
+	splitter := LineFileSplitter{1000}
 
 	// Create a test file with 0 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
@@ -187,7 +187,7 @@ func TestLineFileSplitter_Split_WithEmptyFile(t *testing.T) {
 	}
 
 	// Call the Split function with the mock fileNameCreater.
-	err = splitter.Split(testFile, fileNameCreater, 1000)
+	err = splitter.Split(testFile, fileNameCreater)
 	if err != nil {
 		t.Fatal(err)
 	}

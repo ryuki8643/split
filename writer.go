@@ -11,9 +11,11 @@ type FileSplitter interface {
 }
 
 
-type LineFileSplitter struct {}
+type LineFileSplitter struct {
+	separateLineNumber int
+}
 
-func (s LineFileSplitter) Split(file *os.File, fileNameCreater FileNameCreater, separateLineNumber int) error {
+func (s LineFileSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
 
     // Set the maximum memory limit to 1GB (in bytes).
     const maxMemoryLimit = 1 * 1024 * 1024 * 1024
@@ -40,7 +42,7 @@ func (s LineFileSplitter) Split(file *os.File, fileNameCreater FileNameCreater, 
         buffer = append(buffer, '\n') // Add a newline character after each line.
 
         // If we have read 1000 lines, write to the output file.
-        if lineCounter == separateLineNumber {
+        if lineCounter == s.separateLineNumber {
             // Create the output file.
             outputFilePath,err := fileNameCreater.Create(outputCounter)
             if err != nil {
