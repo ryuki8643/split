@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func createAlphabetFileName(digit int, fileNumber int) (string, error) {
+func createAlphabetFileName(digit int, prefix string,fileNumber int) (string, error) {
 	if digit < 1 {
 		return "", fmt.Errorf(negativeDigitErrorMsg)
 	}
@@ -22,11 +22,15 @@ func createAlphabetFileName(digit int, fileNumber int) (string, error) {
 		fileName = string(rune(remainder+97)) + fileName
 		fileNumber = fileNumber / 26
 	}
-	fileName = "x" + fileName
+	if prefix != "" {
+		fileName = prefix + fileName
+	} else {
+		fileName = "x" + fileName
+	}
 	return fileName, nil
 }
 
-func createNumericFileName(digit int, fileNumber int) (string, error) {
+func createNumericFileName(digit int,prefix string, fileNumber int) (string, error) {
 	if digit < 1 {
 		return "", fmt.Errorf(negativeDigitErrorMsg)
 	}
@@ -41,6 +45,11 @@ func createNumericFileName(digit int, fileNumber int) (string, error) {
 		fileName = strconv.Itoa(fileNumber%10) + fileName
 		fileNumber = fileNumber / 10
 	}
-	fileName = "x" + fileName
+	if prefix != "" {
+		fileName = prefix + fileName
+	} else {
+		fileName = "x" + fileName
+	}
+	
 	return fileName, nil
 }
