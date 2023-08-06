@@ -32,8 +32,8 @@ func TestCreateAlphabetFileName(t *testing.T) {
 
 	// Execute each test case
 	for _, tc := range testCases {
-		var fileNameCreater FileNameCreater = AlphabetFileName{}
-		got,_ := fileNameCreater.Create(tc.digit,tc.prefix, tc.fileNumber)
+		var fileNameCreater FileNameCreater = AlphabetFileNameCreater{tc.digit, tc.prefix}
+		got,_ := fileNameCreater.Create(tc.fileNumber)
 		if got != tc.expectedFileName {
 			t.Errorf("Input: %d, %s,%d, Expected: %s, Got: %s", tc.digit, tc.prefix,tc.fileNumber, tc.expectedFileName, got)
 		}
@@ -68,8 +68,8 @@ func TestCreateAlphabetFileNameNegativeDigitError(t *testing.T) {
 
 	// Execute each test case
 	for _, tc := range testCases {
-		var fileNameCreater FileNameCreater = AlphabetFileName{}
-		got,err := fileNameCreater.Create(tc.digit,tc.prefix, tc.fileNumber)
+		var fileNameCreater FileNameCreater = AlphabetFileNameCreater{tc.digit, tc.prefix}
+		got,err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
 			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.prefix,tc.fileNumber, negativeDigitErrorMsg,got)
@@ -109,8 +109,8 @@ func TestCreateAlphabetFileNameNegativeFileNumberError(t *testing.T) {
 
 	// Execute each test case
 	for _, tc := range testCases {
-		var fileNameCreater FileNameCreater = AlphabetFileName{}
-		got,err := fileNameCreater.Create(tc.digit,tc.prefix, tc.fileNumber)
+		var fileNameCreater FileNameCreater = AlphabetFileNameCreater{tc.digit, tc.prefix}
+		got,err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
 			t.Errorf("Input: %d, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.fileNumber, negativeFileNumberErrorMsg ,got)
@@ -147,8 +147,8 @@ func TestCreateAlphabetFileNameTooBigFileNumberErrorMsg(t *testing.T) {
 
 	// Execute each test case
 	for _, tc := range testCases {
-		var fileNameCreater FileNameCreater = AlphabetFileName{}
-		got,err := fileNameCreater.Create(tc.digit,tc.prefix, tc.fileNumber)
+		var fileNameCreater FileNameCreater = AlphabetFileNameCreater{tc.digit, tc.prefix}
+		got,err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
 			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.prefix,tc.fileNumber, tooBigFileNumberErrorMsg ,got)
@@ -188,8 +188,8 @@ func TestCreateNumericFileName(t *testing.T) {
 
 	// Execute each test case
 	for _, tc := range testCases {
-		var fileNameCreater FileNameCreater = NumericFileName{}
-		got,_ := fileNameCreater.Create(tc.digit,tc.prefix, tc.fileNumber)
+		var fileNameCreater FileNameCreater = NumericFileNameCreater{tc.digit, tc.prefix}
+		got, _ := fileNameCreater.Create(tc.fileNumber)
 		if got != tc.expectedFileName {
 			t.Errorf("Input: %d, %s, %d, Expected: %s, Got: %s", tc.digit, tc.prefix,tc.fileNumber, tc.expectedFileName, got)
 		}
@@ -224,8 +224,8 @@ func TestCreateNumericFileNameNegativeDigitError(t *testing.T) {
 
 	// Execute each test case
 	for _, tc := range testCases {
-		var fileNameCreater FileNameCreater = NumericFileName{}
-		got,err := fileNameCreater.Create(tc.digit,tc.prefix, tc.fileNumber)
+		var fileNameCreater FileNameCreater = NumericFileNameCreater{tc.digit, tc.prefix}
+		got, err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
 			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit,tc.prefix, tc.fileNumber, negativeDigitErrorMsg,got)
@@ -265,8 +265,8 @@ func TestCreateNumericFileNameNegativeFileNumberError(t *testing.T) {
 
 	// Execute each test case
 	for _, tc := range testCases {
-		var fileNameCreater FileNameCreater = NumericFileName{}
-		got,err := fileNameCreater.Create(tc.digit,tc.prefix, tc.fileNumber)
+		var fileNameCreater FileNameCreater = NumericFileNameCreater{tc.digit, tc.prefix}
+		got, err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
 			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit,tc.prefix, tc.fileNumber, negativeFileNumberErrorMsg ,got)
@@ -303,8 +303,8 @@ func TestCreateNumericFileNameTooBigFileNumberErrorMsg(t *testing.T) {
 
 	// Execute each test case
 	for _, tc := range testCases {
-		var fileNameCreater FileNameCreater = NumericFileName{}
-		got,err := fileNameCreater.Create(tc.digit,tc.prefix, tc.fileNumber)
+		var fileNameCreater FileNameCreater = NumericFileNameCreater{tc.digit, tc.prefix}
+		got,err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
 			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit,tc.prefix, tc.fileNumber, tooBigFileNumberErrorMsg ,got)
