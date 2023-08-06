@@ -6,7 +6,15 @@ import (
 	"strconv"
 )
 
-func createAlphabetFileName(digit int, prefix string,fileNumber int) (string, error) {
+type FileNameCreater interface {
+	Create(digit int, prefix string,fileNumber int) (string, error)
+}
+
+type AlphabetFileName struct {
+
+}
+
+func (i AlphabetFileName)Create(digit int, prefix string,fileNumber int) (string, error) {
 	if digit < 1 {
 		return "", fmt.Errorf(negativeDigitErrorMsg)
 	}
@@ -30,7 +38,9 @@ func createAlphabetFileName(digit int, prefix string,fileNumber int) (string, er
 	return fileName, nil
 }
 
-func createNumericFileName(digit int,prefix string, fileNumber int) (string, error) {
+type NumericFileName struct {}
+
+func (i NumericFileName) Create(digit int,prefix string, fileNumber int) (string, error) {
 	if digit < 1 {
 		return "", fmt.Errorf(negativeDigitErrorMsg)
 	}
