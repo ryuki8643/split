@@ -16,7 +16,7 @@ const (
 	createFileErrorMsg = "failed to create the output file:%w"
 	fileWriteErrorMsg = "failed to write to the output file:%w"
 	fileReadErrorMsg = "failed to read from the input file:%w"
-)
+	separateByteInvalidErrorMsg = "separate byte is invalid")
 
 func main() {
 	flag.Parse()
