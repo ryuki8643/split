@@ -7,6 +7,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 type FileSplitter interface {
@@ -175,37 +176,34 @@ func (s ByteSplitter) Split(file *os.File, fileNameCreater FileNameCreater) erro
 
 
 func separateByteStrToInt(separateByteStr string) (int, error) {
-	numberPattern := `^\d+$`
-	kiloBytePattern := `^\d+k$`
-	megaBytePattern := `^\d+m$`
+	re := regexp.MustCompile(`^(\d+)([kmgtpesy]*)b?$`)
 
-	// Compile the regular expressions
-	numberRegex := regexp.MustCompile(numberPattern)
-	kiloByteRegex := regexp.MustCompile(kiloBytePattern)
-	megaByteRegex := regexp.MustCompile(megaBytePattern)
-	var separateByte int
-	if  numberRegex.MatchString(separateByteStr) {
-		s,err:=strconv.Atoi(separateByteStr)
+	
+	match := re.FindStringSubmatch(strings.ToLower(separateByteStr))
+	if len(match) >= 3 {
+		numberStr := match[1]
+		unit := match[2]
+
+		number, err := strconv.Atoi(numberStr)
 		if err != nil {
-			return 0,fmt.Errorf(separateByteInvalidErrorMsg)
+			return 0, fmt.Errorf(separateByteInvalidErrorMsg)						
 		}
-		separateByte = s
-	} else if kiloByteRegex.MatchString(separateByteStr) {
-		s,err := strconv.Atoi(separateByteStr[:len(separateByteStr)-1])
-		if err != nil {
-			return 0,fmt.Errorf(separateByteInvalidErrorMsg)
+
+			factor := 1
+			switch unit {
+			case "k":
+				factor = 1024
+			case "m":
+				factor = 1024 * 1024
+			case "g":
+				factor = 1024 * 1024 * 1024
+			}
+
+			separateByte:= number * factor
+			return separateByte,nil
 		}
-		separateByte =s * 1024
-	} else if megaByteRegex.MatchString(separateByteStr) {
-		s,err := strconv.Atoi(separateByteStr[:len(separateByteStr)-1])
-		if err != nil {
-			return 0,fmt.Errorf(separateByteInvalidErrorMsg)
-		}
-		separateByte = s * 1024 * 1024
-	} else {
-		return 0,fmt.Errorf(separateByteInvalidErrorMsg)
-	}
-	return separateByte,nil
+		return 0, fmt.Errorf(separateByteInvalidErrorMsg)
+			
 }
 
 

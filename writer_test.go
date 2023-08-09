@@ -515,7 +515,17 @@ func TestSeparateByteStrToInt(t *testing.T) {
     }{
         {"100", 100, nil},
         {"1k", 1024, nil},
+		{"1K", 1024, nil},
+		{"1kb", 1024, nil},
+		{"1KB", 1024, nil},
         {"2m", 2097152, nil},
+		{"2M", 2097152, nil},
+		{"2mb", 2097152, nil},
+		{"2MB", 2097152, nil},
+		{"1g", 1073741824, nil},
+		{"1G", 1073741824, nil},
+		{"1gb", 1073741824, nil},
+		{"1GB", 1073741824, nil},
         {"abc", 0, fmt.Errorf(separateByteInvalidErrorMsg)},
     }
 
