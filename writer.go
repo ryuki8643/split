@@ -207,3 +207,75 @@ func separateByteStrToInt(separateByteStr string) (int, error) {
 	}
 	return separateByte,nil
 }
+
+
+type PieceSplitter struct {
+	separatePieceNumberStr int64
+}
+
+func (s PieceSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
+	
+	// Get the file information.
+	info, err := file.Stat()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+	// Calculate the size of each piece.
+	splitSize:=info.Size()/s.separatePieceNumberStr
+
+	if info.Size()%s.separatePieceNumberStr != 0 {
+		splitSize++
+	}
+	
+	
+	// 1GB memory limit (in bytes).
+	const maxMemoryLimit = 1 * 1024 * 1024 * 1024
+
+	// Buffer to store file data temporarily.
+	buffer := make([]byte, 0, maxMemoryLimit)
+
+	// Output file counter to keep track of split files.
+	outputCounter := 0
+
+	// Read the input file and write to the output files.
+	for {
+		// Read separateByte of data from the input file.
+		n, err := file.Read(buffer[:splitSize])
+
+		if err != nil && err != io.EOF {
+			return fmt.Errorf(fileReadErrorMsg, err)
+		}
+
+		if n == 0 {
+			// Reached the end of the file, exit the loop.
+			break
+		}
+
+		// Create the output file.
+		outputFilePath,err := fileNameCreater.Create(outputCounter)
+		if err != nil {
+			return err
+		}
+		outFile, err := os.Create(outputFilePath)
+		if err != nil {
+			return fmt.Errorf(createFileErrorMsg,err)
+		}
+		defer outFile.Close()
+
+		// Write the buffer data to the output file.
+		_, err = outFile.Write(buffer[:n])
+		if err != nil {
+			return fmt.Errorf(fileWriteErrorMsg, err)
+		}
+
+		// Reset the buffer for the next output file.
+		buffer = buffer[:0]
+
+		// Increment the output file counter.
+		outputCounter++
+	}
+
+	fmt.Println("File splitting is complete.")
+	return nil
+}
