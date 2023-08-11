@@ -291,13 +291,16 @@ func (s PieceLineSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
     buffer := make([]byte, 0)
 
 	// count file line number
-	fileLineNum := countLinesByFile(file)
+	fileLineNum,err := countLinesByFile(file)
+	if err != nil {
+		return err
+	}
 
 
-	fileSizePerPiece := fileLineNum / s.separatePieceNumberStr
+	fileLinesPerPiece := fileLineNum / s.separatePieceNumberStr
 
 	if fileLineNum%s.separatePieceNumberStr != 0 {
-		fileSizePerPiece++
+		fileLinesPerPiece++
 	}
 
     // Line counter to keep track of lines read from the input file.
@@ -319,7 +322,7 @@ func (s PieceLineSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
         buffer = append(buffer, '\n') // Add a newline character after each line.
 
         // If we have read 1000 lines, write to the output file.
-        if lineCounter == fileSizePerPiece {
+        if lineCounter == fileLinesPerPiece {
             // Create the output file.
             outputFilePath,err := fileNameCreater.Create(outputCounter)
             if err != nil {
@@ -385,11 +388,16 @@ func (s PieceLineSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
     return nil
 }
 
-func countLinesByFile(file *os.File) int64 {
+func countLinesByFile(file *os.File) (int64,error) {
+	fileForCountLine, err := os.Open(file.Name())
+	if err != nil {
+		return 0, fmt.Errorf(fileReadErrorMsg,err);
+
+	}
 	var count int64
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(fileForCountLine)
 	for scanner.Scan() {
 		count++
 	}
-	return count
+	return count,nil
 }

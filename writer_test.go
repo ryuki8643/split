@@ -55,23 +55,23 @@ func TestLineFileSplitterSplit1000Lines(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if countLines(output1) != 1000 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLines(output1))
+	if countLinesByByte(output1) != 1000 {
+		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
 	}
 	
 	output2, err := os.ReadFile("outputab")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if countLines(output2) != 1000 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLines(output2))
+	if countLinesByByte(output2) != 1000 {
+		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
 	}
 	output3, err := os.ReadFile("outputac")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if countLines(output3) != 7 {
-		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLines(output3))
+	if countLinesByByte(output3) != 7 {
+		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
 	}
 
 	if countFiles() != 3 {
@@ -135,16 +135,16 @@ func TestLineFileSplitterSplit500Lines(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if countLines(output1) != 500 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLines(output1))
+	if countLinesByByte(output1) != 500 {
+		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
 	}
 	
 	output2, err := os.ReadFile("outputab")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if countLines(output2) != 216 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLines(output2))
+	if countLinesByByte(output2) != 216 {
+		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
 	}
 
 	if countFiles() != 2 {
@@ -203,7 +203,7 @@ func TestLineFileSplitterSplitWithEmptyFile(t *testing.T) {
 
 
 
-func countLines(data []byte) int {
+func countLinesByByte(data []byte) int {
 	count := 0
 	for _, b := range data {
 		if b == '\n' {
@@ -780,4 +780,215 @@ func TestBytePieceSplitter0ByteFileto0file(t *testing.T) {
 		t.Fatal("Incorrect number of output files.")
 	}
 
+}
+
+func TestPieceLineFileSplitterSplit1000Lines(t *testing.T) {
+
+	defer deleteOutputFiles()
+	// Create a mock fileNameCreater.
+	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
+
+	// Create a LineFileSplitter instance.
+	splitter := PieceLineSplitter{3}
+
+	// Create a test file with 2000 lines.
+	testFile, err := os.CreateTemp("", "testfile.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(testFile.Name())
+	for i := 1; i <= 2007; i++ {
+		fmt.Fprintln(testFile, "line", i)
+	}
+
+	// Reset the file pointer to the beginning.
+	if _, err := testFile.Seek(0, 0); err != nil {
+		t.Fatal(err)
+	}
+
+	// Call the Split function with the mock fileNameCreater.
+	err = splitter.Split(testFile, fileNameCreater)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Check that the output files were created.
+	if _, err := os.Stat("outputaa"); os.IsNotExist(err) {
+		t.Fatal("outputaa file was not created.")
+	}
+	if _, err := os.Stat("outputab"); os.IsNotExist(err) {
+		t.Fatal("outputab was not created.")
+	}
+	if _, err := os.Stat("outputac"); os.IsNotExist(err) {
+		t.Fatal("outputab was not created.")
+	}
+
+	// Check that the output files have the correct lines
+	output1, err := os.ReadFile("outputaa")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if countLinesByByte(output1) != 669 {
+		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+	}
+	
+	output2, err := os.ReadFile("outputab")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if countLinesByByte(output2) != 669 {
+		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+	}
+	output3, err := os.ReadFile("outputac")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if countLinesByByte(output3) != 669 {
+		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
+	}
+
+	if countFiles() != 3 {
+		t.Fatal("Incorrect number of output files.")
+	}
+
+
+	testFileContent, err := os.ReadFile(testFile.Name())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testFileString := string(testFileContent)
+	if string(output1)+string(output2)+string(output3) != testFileString {
+		t.Fatal("Incorrect output file content.")
+	}
+
+}
+
+func TestPieceLineFileSplitterSplit500Lines(t *testing.T) {
+
+	defer deleteOutputFiles()
+	// Create a mock fileNameCreater.
+	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
+
+	// Create a LineFileSplitter instance.
+	splitter := PieceLineSplitter{4}
+
+	// Create a test file with 2000 lines.
+	testFile, err := os.CreateTemp("", "testfile.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(testFile.Name())
+	for i := 1; i <= 715; i++ {
+		fmt.Fprintln(testFile, "line", i)
+	}
+
+	// Reset the file pointer to the beginning.
+	if _, err := testFile.Seek(0, 0); err != nil {
+		t.Fatal(err)
+	}
+
+	// Call the Split function with the mock fileNameCreater.
+	err = splitter.Split(testFile, fileNameCreater)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Check that the output files were created.
+	if _, err := os.Stat("outputaa"); os.IsNotExist(err) {
+		t.Fatal("outputaa file was not created.")
+	}
+	if _, err := os.Stat("outputab"); os.IsNotExist(err) {
+		t.Fatal("outputab was not created.")
+	}
+	if _, err := os.Stat("outputac"); os.IsNotExist(err) {
+		t.Fatal("outputab was not created.")
+	}
+	if _, err := os.Stat("outputad"); os.IsNotExist(err) {
+		t.Fatal("outputab was not created.")
+	}
+
+	// Check that the output files have the correct lines
+	output1, err := os.ReadFile("outputaa")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if countLinesByByte(output1) != 179 {
+		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+	}
+	
+	output2, err := os.ReadFile("outputab")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if countLinesByByte(output2) != 179 {
+		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+	}
+	output3, err := os.ReadFile("outputac")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if countLinesByByte(output3) != 179 {
+		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
+	}
+	output4, err := os.ReadFile("outputad")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if countLinesByByte(output4) != 178 {
+		t.Fatal("outputad file has incorrect number of lines. Expected 7, got ", countLinesByByte(output4))
+	}
+
+	if countFiles() != 4 {
+		t.Fatal("Incorrect number of output files.")
+	}
+
+
+	testFileContent, err := os.ReadFile(testFile.Name())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testFileString := string(testFileContent)
+	if string(output1)+string(output2)+string(output3)+string(output4) != testFileString {
+		t.Fatal("Incorrect output file content.")
+	}
+
+}
+
+
+
+func TestPieceLineFileSplitterSplitWithEmptyFile(t *testing.T) {
+	
+	defer deleteOutputFiles()
+	// Create a mock fileNameCreater.
+	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
+
+	// Create a LineFileSplitter instance.
+	splitter := PieceLineSplitter{1000}
+
+	// Create a test file with 0 lines.
+	testFile, err := os.CreateTemp("", "testfile.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(testFile.Name())
+
+	// Reset the file pointer to the beginning.
+	if _, err := testFile.Seek(0, 0); err != nil {
+		t.Fatal(err)
+	}
+
+	// Call the Split function with the mock fileNameCreater.
+	err = splitter.Split(testFile, fileNameCreater)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Check that the output files were created.
+	if _, err := os.Stat("outputaa"); os.IsExist(err) {
+		t.Fatal("null file was created.")
+	}
 }
