@@ -756,7 +756,7 @@ func TestBytePieceSplitter0ByteFileto0file(t *testing.T) {
 
 }
 
-func TestPieceLineFileSplitterSplit1000Lines(t *testing.T) {
+func TestPieceLineFileSplitterSplit2007Lines(t *testing.T) {
 
 	defer deleteOutputFiles()
 	// Create a mock fileNameCreater.
@@ -838,7 +838,7 @@ func TestPieceLineFileSplitterSplit1000Lines(t *testing.T) {
 
 }
 
-func TestPieceLineFileSplitterSplit500Lines(t *testing.T) {
+func TestPieceLineFileSplitterSplit713Lines(t *testing.T) {
 
 	defer deleteOutputFiles()
 	// Create a mock fileNameCreater.
@@ -963,7 +963,7 @@ func TestPieceLineFileSplitterSplitWithEmptyFile(t *testing.T) {
 	}
 }
 
-func TestPieceLineRoundRobinFileSplitterSplit1000Lines(t *testing.T) {
+func TestPieceLineRoundRobinFileSplitterSplit2007Lines(t *testing.T) {
 
 	defer deleteOutputFiles()
 	// Create a mock fileNameCreater.
@@ -1045,7 +1045,7 @@ func TestPieceLineRoundRobinFileSplitterSplit1000Lines(t *testing.T) {
 
 }
 
-func TestPieceLineRoundRobinFileSplitterSplit500Lines(t *testing.T) {
+func TestPieceLineRoundRobinFileSplitterSplit713Lines(t *testing.T) {
 
 	defer deleteOutputFiles()
 	// Create a mock fileNameCreater.

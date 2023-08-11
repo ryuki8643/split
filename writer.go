@@ -388,8 +388,6 @@ type PieceLineRoundRobinSplitter struct {
 
 func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
 
-	// Set the maximum memory limit to 1GB (in bytes).
-	const maxMemoryLimit = 1 * 1024 * 1024 * 1024
 
 	// Initialize a buffer to store file data temporarily.
 	buffer := make([]byte, 0)
@@ -439,7 +437,10 @@ func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNa
 		}
 
 		// Close the output file.
-		outFile.Close()
+		err=outFile.Close()
+		if err != nil {
+			return fmt.Errorf(fileWriteErrorMsg, err)
+		}
 
 		// Increment the output file counter.
 		outputCounter++
