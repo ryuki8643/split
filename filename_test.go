@@ -7,35 +7,35 @@ import (
 func TestCreateAlphabetFileName(t *testing.T) {
 	// Define test cases
 	testCases := []struct {
-		digit int
-		prefix string
-		fileNumber int
-		expectedFileName   string
+		digit            int
+		prefix           string
+		fileNumber       int
+		expectedFileName string
 	}{
-		{2,"", 25, "xaz"},
-		{3,"a", 10, "aaak"},
-		{4,"b", 456, "baaro"},
-		{1,"c", 0, "ca"},
-		{2, "d",26, "dba"},
-		{2,"dada", 27, "dadabb"},
-		{2,"hshara.fhnfaf", 53, "hshara.fhnfafcb"},
-		{2,"sa", 675, "sazz"},
-		{3, "sfaf",100, "sfafadw"},
-		{3,"sad", 702, "sadbba"},
-		{3, "fhhtrnvxcx",703, "fhhtrnvxcxbbb"},
-		{4, "123345",18278, "123345bbba"},
-		{4, "x",18279, "xbbbb"},
-		{5, "ogjsg",456789, "ogjsgazzsv"},
-		{6, "",4567890, "xajzxgc"},
-		{6, "geslgposejpgjspeojgjhpgjghjpag",999999, "geslgposejpgjspeojgjhpgjghjpagacexhn"},
+		{2, "", 25, "xaz"},
+		{3, "a", 10, "aaak"},
+		{4, "b", 456, "baaro"},
+		{1, "c", 0, "ca"},
+		{2, "d", 26, "dba"},
+		{2, "dada", 27, "dadabb"},
+		{2, "hshara.fhnfaf", 53, "hshara.fhnfafcb"},
+		{2, "sa", 675, "sazz"},
+		{3, "sfaf", 100, "sfafadw"},
+		{3, "sad", 702, "sadbba"},
+		{3, "fhhtrnvxcx", 703, "fhhtrnvxcxbbb"},
+		{4, "123345", 18278, "123345bbba"},
+		{4, "x", 18279, "xbbbb"},
+		{5, "ogjsg", 456789, "ogjsgazzsv"},
+		{6, "", 4567890, "xajzxgc"},
+		{6, "geslgposejpgjspeojgjhpgjghjpag", 999999, "geslgposejpgjspeojgjhpgjghjpagacexhn"},
 	}
 
 	// Execute each test case
 	for _, tc := range testCases {
 		var fileNameCreater FileNameCreater = AlphabetFileNameCreater{tc.digit, tc.prefix}
-		got,_ := fileNameCreater.Create(tc.fileNumber)
+		got, _ := fileNameCreater.Create(tc.fileNumber)
 		if got != tc.expectedFileName {
-			t.Errorf("Input: %d, %s,%d, Expected: %s, Got: %s", tc.digit, tc.prefix,tc.fileNumber, tc.expectedFileName, got)
+			t.Errorf("Input: %d, %s,%d, Expected: %s, Got: %s", tc.digit, tc.prefix, tc.fileNumber, tc.expectedFileName, got)
 		}
 	}
 }
@@ -43,10 +43,10 @@ func TestCreateAlphabetFileName(t *testing.T) {
 func TestCreateAlphabetFileNameNegativeDigitError(t *testing.T) {
 	// Define test cases
 	testCases := []struct {
-		digit int
-		prefix string
-		fileNumber int
-		expectedFileName   string
+		digit            int
+		prefix           string
+		fileNumber       int
+		expectedFileName string
 	}{
 		{0, "", 25, ""},
 		{-2, "a", 10, ""},
@@ -69,25 +69,24 @@ func TestCreateAlphabetFileNameNegativeDigitError(t *testing.T) {
 	// Execute each test case
 	for _, tc := range testCases {
 		var fileNameCreater FileNameCreater = AlphabetFileNameCreater{tc.digit, tc.prefix}
-		got,err := fileNameCreater.Create(tc.fileNumber)
+		got, err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
-			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.prefix,tc.fileNumber, negativeDigitErrorMsg,got)
+			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.prefix, tc.fileNumber, negativeDigitErrorMsg, got)
 		} else if err.Error() != negativeDigitErrorMsg {
 			// Error should be negativeDigitErrorMsg
-			t.Errorf("Input: %d, %s %d, Expected: %s, Got: %s", tc.digit,tc.prefix, tc.fileNumber, tc.expectedFileName, err.Error())
+			t.Errorf("Input: %d, %s %d, Expected: %s, Got: %s", tc.digit, tc.prefix, tc.fileNumber, tc.expectedFileName, err.Error())
 		}
 	}
 }
 
-
 func TestCreateAlphabetFileNameNegativeFileNumberError(t *testing.T) {
 	// Define test cases
 	testCases := []struct {
-		digit int
-		prefix string
-		fileNumber int
-		expectedFileName   string
+		digit            int
+		prefix           string
+		fileNumber       int
+		expectedFileName string
 	}{
 		{2, "", -22, ""},
 		{3, "a", -1, ""},
@@ -110,10 +109,10 @@ func TestCreateAlphabetFileNameNegativeFileNumberError(t *testing.T) {
 	// Execute each test case
 	for _, tc := range testCases {
 		var fileNameCreater FileNameCreater = AlphabetFileNameCreater{tc.digit, tc.prefix}
-		got,err := fileNameCreater.Create(tc.fileNumber)
+		got, err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
-			t.Errorf("Input: %d, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.fileNumber, negativeFileNumberErrorMsg ,got)
+			t.Errorf("Input: %d, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.fileNumber, negativeFileNumberErrorMsg, got)
 		} else if err.Error() != negativeFileNumberErrorMsg {
 			// Error should be negativeFileNumberErrorMsg
 			t.Errorf("Input: %d, %d, Expected: %s, Got: %s", tc.digit, tc.fileNumber, tc.expectedFileName, err.Error())
@@ -121,14 +120,13 @@ func TestCreateAlphabetFileNameNegativeFileNumberError(t *testing.T) {
 	}
 }
 
-
 func TestCreateAlphabetFileNameTooBigFileNumberErrorMsg(t *testing.T) {
 	// Define test cases
 	testCases := []struct {
-		digit int
-		prefix string
-		fileNumber int
-		expectedFileName   string
+		digit            int
+		prefix           string
+		fileNumber       int
+		expectedFileName string
 	}{
 		{1, "", 26, ""},
 		{1, "a", 27, ""},
@@ -142,31 +140,29 @@ func TestCreateAlphabetFileNameTooBigFileNumberErrorMsg(t *testing.T) {
 		{5, "sad", 11881377, ""},
 		{6, "fhhtrnvxcx", 308915776, ""},
 		{6, "123345", 308915777, ""},
-
 	}
 
 	// Execute each test case
 	for _, tc := range testCases {
 		var fileNameCreater FileNameCreater = AlphabetFileNameCreater{tc.digit, tc.prefix}
-		got,err := fileNameCreater.Create(tc.fileNumber)
+		got, err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
-			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.prefix,tc.fileNumber, tooBigFileNumberErrorMsg ,got)
+			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.prefix, tc.fileNumber, tooBigFileNumberErrorMsg, got)
 		} else if err.Error() != tooBigFileNumberErrorMsg {
 			// Error should be tooBigFileNumberErrorMsg
-			t.Errorf("Input: %d, %s, %d, Expected: %s, Got: %s", tc.digit, tc.prefix,tc.fileNumber, tc.expectedFileName, err.Error())
+			t.Errorf("Input: %d, %s, %d, Expected: %s, Got: %s", tc.digit, tc.prefix, tc.fileNumber, tc.expectedFileName, err.Error())
 		}
 	}
 }
 
-
 func TestCreateNumericFileName(t *testing.T) {
 	// Define test cases
 	testCases := []struct {
-		digit int
-		prefix string
-		fileNumber int
-		expectedFileName   string
+		digit            int
+		prefix           string
+		fileNumber       int
+		expectedFileName string
 	}{
 		{2, "", 99, "x99"},
 		{3, "a", 10, "a010"},
@@ -191,7 +187,7 @@ func TestCreateNumericFileName(t *testing.T) {
 		var fileNameCreater FileNameCreater = NumericFileNameCreater{tc.digit, tc.prefix}
 		got, _ := fileNameCreater.Create(tc.fileNumber)
 		if got != tc.expectedFileName {
-			t.Errorf("Input: %d, %s, %d, Expected: %s, Got: %s", tc.digit, tc.prefix,tc.fileNumber, tc.expectedFileName, got)
+			t.Errorf("Input: %d, %s, %d, Expected: %s, Got: %s", tc.digit, tc.prefix, tc.fileNumber, tc.expectedFileName, got)
 		}
 	}
 }
@@ -199,10 +195,10 @@ func TestCreateNumericFileName(t *testing.T) {
 func TestCreateNumericFileNameNegativeDigitError(t *testing.T) {
 	// Define test cases
 	testCases := []struct {
-		digit int
-		prefix string
-		fileNumber int
-		expectedFileName   string
+		digit            int
+		prefix           string
+		fileNumber       int
+		expectedFileName string
 	}{
 		{0, "", 25, ""},
 		{-2, "a", 10, ""},
@@ -228,22 +224,21 @@ func TestCreateNumericFileNameNegativeDigitError(t *testing.T) {
 		got, err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
-			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit,tc.prefix, tc.fileNumber, negativeDigitErrorMsg,got)
+			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.prefix, tc.fileNumber, negativeDigitErrorMsg, got)
 		} else if err.Error() != negativeDigitErrorMsg {
 			// Error should be negativeDigitErrorMsg
-			t.Errorf("Input: %d, %s, %d, Expected: %s, Got: %s", tc.digit,tc.prefix, tc.fileNumber, tc.expectedFileName, err.Error())
+			t.Errorf("Input: %d, %s, %d, Expected: %s, Got: %s", tc.digit, tc.prefix, tc.fileNumber, tc.expectedFileName, err.Error())
 		}
 	}
 }
 
-
 func TestCreateNumericFileNameNegativeFileNumberError(t *testing.T) {
 	// Define test cases
 	testCases := []struct {
-		digit int
-		prefix string
-		fileNumber int
-		expectedFileName   string
+		digit            int
+		prefix           string
+		fileNumber       int
+		expectedFileName string
 	}{
 		{2, "", -22, ""},
 		{3, "a", -1, ""},
@@ -269,7 +264,7 @@ func TestCreateNumericFileNameNegativeFileNumberError(t *testing.T) {
 		got, err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
-			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit,tc.prefix, tc.fileNumber, negativeFileNumberErrorMsg ,got)
+			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.prefix, tc.fileNumber, negativeFileNumberErrorMsg, got)
 		} else if err.Error() != negativeFileNumberErrorMsg {
 			// Error should be negativeFileNumberErrorMsg
 			t.Errorf("Input: %d, %s, %d, Expected: %s, Got: %s", tc.digit, tc.prefix, tc.fileNumber, tc.expectedFileName, err.Error())
@@ -277,14 +272,13 @@ func TestCreateNumericFileNameNegativeFileNumberError(t *testing.T) {
 	}
 }
 
-
 func TestCreateNumericFileNameTooBigFileNumberErrorMsg(t *testing.T) {
 	// Define test cases
 	testCases := []struct {
-		digit int
-		prefix string
-		fileNumber int
-		expectedFileName   string
+		digit            int
+		prefix           string
+		fileNumber       int
+		expectedFileName string
 	}{
 		{1, "", 10, ""},
 		{1, "a", 11, ""},
@@ -298,19 +292,18 @@ func TestCreateNumericFileNameTooBigFileNumberErrorMsg(t *testing.T) {
 		{5, "sad", 100001, ""},
 		{6, "fhhtrnvxcx", 1000000, ""},
 		{6, "123345", 1000001, ""},
-
 	}
 
 	// Execute each test case
 	for _, tc := range testCases {
 		var fileNameCreater FileNameCreater = NumericFileNameCreater{tc.digit, tc.prefix}
-		got,err := fileNameCreater.Create(tc.fileNumber)
+		got, err := fileNameCreater.Create(tc.fileNumber)
 		if err == nil {
 			// Error should be thrown
-			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit,tc.prefix, tc.fileNumber, tooBigFileNumberErrorMsg ,got)
+			t.Errorf("Input: %d, %s, %d, Expected: %s, Got no error and return: %s", tc.digit, tc.prefix, tc.fileNumber, tooBigFileNumberErrorMsg, got)
 		} else if err.Error() != tooBigFileNumberErrorMsg {
 			// Error should be tooBigFileNumberErrorMsg
-			t.Errorf("Input: %d, %s, %d, Expected: %s, Got: %s", tc.digit,tc.prefix, tc.fileNumber, tc.expectedFileName, err.Error())
+			t.Errorf("Input: %d, %s, %d, Expected: %s, Got: %s", tc.digit, tc.prefix, tc.fileNumber, tc.expectedFileName, err.Error())
 		}
 	}
 }
