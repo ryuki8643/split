@@ -1278,6 +1278,21 @@ func TestParseCHUNK(t *testing.T) {
 			want:  chunk{},
 			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
 		},
+		{
+			input: "0/20",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "r/0/20",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "0",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
 	}
 
 	for _, test := range tests {

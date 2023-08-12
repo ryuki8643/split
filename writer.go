@@ -532,6 +532,9 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 			if err != nil {
 				return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 			}
+			if result.K == 0 {
+				return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
+			}
 		}
 		result.N, err = strconv.ParseInt(parts[1], 10, 64)
 		if err != nil {
@@ -548,6 +551,9 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 		if err != nil {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
+		if result.K == 0 {
+			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
+		}
 
 		result.N, err = strconv.ParseInt(parts[2], 10, 64)
 		if err != nil {
@@ -557,6 +563,9 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 		return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 	}
 	if result.N < result.K {
+		return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
+	}
+	if result.N == 0 {
 		return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 	}
 	return result, nil
