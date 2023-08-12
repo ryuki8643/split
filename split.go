@@ -22,6 +22,12 @@ const (
 	chunkFormatInvalidErrorMsg       = "chunk format is invalid"
 )
 
+var writer io.Writer
+
+func init() {
+    writer = os.Stdout
+}
+
 func main() {
 	flag.Parse()
 	fmt.Println(flag.Args())
