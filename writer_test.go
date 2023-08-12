@@ -527,7 +527,7 @@ func TestBytePieceSplitter5000ByteFileto3file(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	// Create a LineFileSplitter instance.
-	splitter := PieceSplitter{3}
+	splitter := PieceByteSplitter{3}
 
 	// Create a test file
 	testFile, err := os.CreateTemp("", "testfile.txt")
@@ -623,7 +623,7 @@ func TestBytePieceSplitter3000ByteFileto3file(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	// Create a LineFileSplitter instance.
-	splitter := PieceSplitter{3}
+	splitter := PieceByteSplitter{3}
 
 	// Create a test file
 	testFile, err := os.CreateTemp("", "testfile.txt")
@@ -719,7 +719,7 @@ func TestBytePieceSplitter0ByteFileto0file(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	// Create a LineFileSplitter instance.
-	splitter := PieceSplitter{3}
+	splitter := PieceByteSplitter{3}
 
 	// Create a test file
 	testFile, err := os.CreateTemp("", "testfile.txt")

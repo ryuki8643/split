@@ -203,11 +203,11 @@ func separateByteStrToInt(separateByteStr string) (int, error) {
 
 }
 
-type PieceSplitter struct {
+type PieceByteSplitter struct {
 	separatePieceNumberStr int64
 }
 
-func (s PieceSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
+func (s PieceByteSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
 
 	// Get the file information.
 	info, err := file.Stat()
@@ -525,3 +525,5 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 	}
 	return result, nil
 }
+
+
