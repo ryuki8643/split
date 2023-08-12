@@ -203,8 +203,29 @@ func separateByteStrToInt(separateByteStr string) (int, error) {
 
 }
 
+type PieceSplitter struct {
+	chunkStr string
+}
+
+func (s PieceSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
+	chunk, err := parseCHUNK(s.chunkStr)
+	if err != nil {
+		return err
+	}
+	var splitter FileSplitter
+	if chunk.R { 
+		splitter = PieceLineRoundRobinSplitter{chunk.N}
+	} else if chunk.L{
+		splitter = PieceLineSplitter{chunk.N}
+	} else {
+		splitter = PieceByteSplitter{chunk.N}
+	}
+	return splitter.Split(file, fileNameCreater)
+
+}
+
 type PieceByteSplitter struct {
-	separatePieceNumberStr int64
+	separatePieceNumber int64
 }
 
 func (s PieceByteSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
@@ -216,9 +237,9 @@ func (s PieceByteSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
 		os.Exit(1)
 	}
 	// Calculate the size of each piece.
-	splitSize := info.Size() / s.separatePieceNumberStr
+	splitSize := info.Size() / s.separatePieceNumber
 
-	if info.Size()%s.separatePieceNumberStr != 0 {
+	if info.Size()%s.separatePieceNumber != 0 {
 		splitSize++
 	}
 
@@ -274,7 +295,7 @@ func (s PieceByteSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
 }
 
 type PieceLineSplitter struct {
-	separatePieceNumberStr int64
+	separatePieceNumber int64
 }
 
 func (s PieceLineSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
@@ -291,9 +312,9 @@ func (s PieceLineSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
 		return err
 	}
 
-	fileLinesPerPiece := fileLineNum / s.separatePieceNumberStr
+	fileLinesPerPiece := fileLineNum / s.separatePieceNumber
 
-	if fileLineNum%s.separatePieceNumberStr != 0 {
+	if fileLineNum%s.separatePieceNumber != 0 {
 		fileLinesPerPiece++
 	}
 
@@ -383,7 +404,7 @@ func (s PieceLineSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
 }
 
 type PieceLineRoundRobinSplitter struct {
-	separatePieceNumberStr int64
+	separatePieceNumber int64
 }
 
 func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
@@ -397,9 +418,9 @@ func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNa
 		return err
 	}
 
-	fileLinesPerPiece := fileLineNum / s.separatePieceNumberStr
+	fileLinesPerPiece := fileLineNum / s.separatePieceNumber
 
-	if fileLineNum%s.separatePieceNumberStr != 0 {
+	if fileLineNum%s.separatePieceNumber != 0 {
 		fileLinesPerPiece++
 	}
 
@@ -420,7 +441,7 @@ func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNa
 		buffer = append(buffer, line...)
 		buffer = append(buffer, '\n') // Add a newline character after each line.
 		// Create the output file.
-		outputFilePath, err := fileNameCreater.Create(outputCounter % int(s.separatePieceNumberStr))
+		outputFilePath, err := fileNameCreater.Create(outputCounter % int(s.separatePieceNumber))
 		if err != nil {
 			return err
 		}
@@ -474,8 +495,8 @@ func countLinesByFile(file *os.File) (int64, error) {
 type chunk struct {
 	R bool
 	L bool
-	K int
-	N int
+	K int64
+	N int64
 }
 
 func parseCHUNK(chunkStr string) (chunk, error) {
@@ -483,7 +504,7 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 	parts := strings.Split(chunkStr, "/")
 	var err error
 	if len(parts) == 1 {
-		result.N, err = strconv.Atoi(parts[0])
+		result.N, err = strconv.ParseInt(parts[0],10,64)
 		if err != nil {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
@@ -492,12 +513,12 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 			result.L = parts[0] == "l"
 			result.R = parts[0] == "r"
 		} else {
-			result.K, err = strconv.Atoi(parts[0])
+			result.K, err = strconv.ParseInt(parts[0],10,64)
 			if err != nil {
 				return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 			}
 		}
-		result.N, err = strconv.Atoi(parts[1])
+		result.N, err = strconv.ParseInt(parts[1],10,64)
 		if err != nil {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
@@ -508,12 +529,12 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 		} else {
 				return result, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
-		result.K, err = strconv.Atoi(parts[1])
+		result.K, err = strconv.ParseInt(parts[1],10,64)
 		if err != nil {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
 
-		result.N, err = strconv.Atoi(parts[2])
+		result.N, err = strconv.ParseInt(parts[2],10,64)
 		if err != nil {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
