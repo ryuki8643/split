@@ -1231,6 +1231,11 @@ func TestParseCHUNK(t *testing.T) {
 			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
 		},
 		{
+			input: "17/10",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
 			input: "20ss/ll",
 			want:  chunk{},
 			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
@@ -1240,8 +1245,13 @@ func TestParseCHUNK(t *testing.T) {
 			want:  chunk{},
 			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
 		},
-		{
+				{
 			input: "5/10/20",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "l/30/20",
 			want:  chunk{},
 			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
 		},

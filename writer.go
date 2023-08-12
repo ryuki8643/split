@@ -520,6 +520,8 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 	} else {
 		return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 	}
-
+	if result.N<result.K {
+		return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
+	}
 	return result, nil
 }
