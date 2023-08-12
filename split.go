@@ -8,15 +8,25 @@ import (
 )
 
 const (
-	tooBigFileNumberErrorMsg = "fileNumber is too big"
-	negativeDigitErrorMsg    = "digit is negative"
-	negativeFileNumberErrorMsg    = "fileNumber is negative"
+	tooBigFileNumberErrorMsg   = "fileNumber is too big"
+	negativeDigitErrorMsg      = "digit is negative"
+	negativeFileNumberErrorMsg = "fileNumber is negative"
 
 	maxMemoryLimitExceededErrorMsg = "memory limit exceeded"
-	createFileErrorMsg = "failed to create the output file:%w"
-	fileWriteErrorMsg = "failed to write to the output file:%w"
-	fileReadErrorMsg = "failed to read from the input file:%w"
-	separateByteInvalidErrorMsg = "separate byte is invalid")
+	createFileErrorMsg             = "failed to create the output file:%w"
+	fileWriteErrorMsg              = "failed to write to the output file:%w"
+	fileReadErrorMsg               = "failed to read from the input file:%w"
+	fileCloseErrorMsg              = "failed to close the output file:%w"
+	fileOpenErrorMsg               = "failed to open the input file:%w"
+	separateByteInvalidErrorMsg    = "separate byte is invalid"
+	chunkFormatInvalidErrorMsg       = "chunk format is invalid"
+)
+
+var writer io.Writer
+
+func init() {
+    writer = os.Stdout
+}
 
 func main() {
 	flag.Parse()
@@ -77,4 +87,3 @@ func main() {
 		os.Exit(1)
 	}
 }
-

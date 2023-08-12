@@ -11,11 +11,11 @@ type FileNameCreater interface {
 }
 
 type AlphabetFileNameCreater struct {
-	digit int
+	digit  int
 	prefix string
 }
 
-func (fileNameCreater AlphabetFileNameCreater)Create(fileNumber int) (string, error) {
+func (fileNameCreater AlphabetFileNameCreater) Create(fileNumber int) (string, error) {
 	if fileNameCreater.digit < 1 {
 		return "", fmt.Errorf(negativeDigitErrorMsg)
 	}
@@ -40,7 +40,7 @@ func (fileNameCreater AlphabetFileNameCreater)Create(fileNumber int) (string, er
 }
 
 type NumericFileNameCreater struct {
-	digit int
+	digit  int
 	prefix string
 }
 
@@ -64,6 +64,6 @@ func (fileNameCreater NumericFileNameCreater) Create(fileNumber int) (string, er
 	} else {
 		fileName = "x" + fileName
 	}
-	
+
 	return fileName, nil
 }
