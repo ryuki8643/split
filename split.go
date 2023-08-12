@@ -19,6 +19,7 @@ const (
 	fileCloseErrorMsg              = "failed to close the output file:%w"
 	fileOpenErrorMsg               = "failed to open the input file:%w"
 	separateByteInvalidErrorMsg    = "separate byte is invalid"
+	chunkFormatInvalidErrorMsg       = "chunk format is invalid"
 )
 
 func main() {

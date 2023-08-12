@@ -388,7 +388,6 @@ type PieceLineRoundRobinSplitter struct {
 
 func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
 
-
 	// Initialize a buffer to store file data temporarily.
 	buffer := make([]byte, 0)
 
@@ -437,7 +436,7 @@ func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNa
 		}
 
 		// Close the output file.
-		err=outFile.Close()
+		err = outFile.Close()
 		if err != nil {
 			return fmt.Errorf(fileWriteErrorMsg, err)
 		}
@@ -470,4 +469,57 @@ func countLinesByFile(file *os.File) (int64, error) {
 		count++
 	}
 	return count, nil
+}
+
+type chunk struct {
+	R bool
+	L bool
+	K int
+	N int
+}
+
+func parseCHUNK(chunkStr string) (chunk, error) {
+	result := chunk{}
+	parts := strings.Split(chunkStr, "/")
+	var err error
+	if len(parts) == 1 {
+		result.N, err = strconv.Atoi(parts[0])
+		if err != nil {
+			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
+		}
+	} else if len(parts) == 2 {
+		if parts[0] == "l" || parts[0] == "r" {
+			result.L = parts[0] == "l"
+			result.R = parts[0] == "r"
+		} else {
+			result.K, err = strconv.Atoi(parts[0])
+			if err != nil {
+				return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
+			}
+		}
+		result.N, err = strconv.Atoi(parts[1])
+		if err != nil {
+			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
+		}
+	} else if len(parts) == 3 {
+		if parts[0] == "l" || parts[0] == "r" {
+			result.L = parts[0] == "l"
+			result.R = parts[0] == "r"
+		} else {
+				return result, fmt.Errorf(chunkFormatInvalidErrorMsg)
+		}
+		result.K, err = strconv.Atoi(parts[1])
+		if err != nil {
+			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
+		}
+
+		result.N, err = strconv.Atoi(parts[2])
+		if err != nil {
+			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
+		}
+	} else {
+		return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
+	}
+
+	return result, nil
 }
