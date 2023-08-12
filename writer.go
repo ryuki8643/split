@@ -107,7 +107,6 @@ func (s LineFileSplitter) Split(file *os.File, fileNameCreater FileNameCreater) 
 		return fmt.Errorf(fileReadErrorMsg, err)
 	}
 
-	fmt.Println("File splitting is complete.")
 	return nil
 }
 
@@ -169,7 +168,6 @@ func (s ByteSplitter) Split(file *os.File, fileNameCreater FileNameCreater) erro
 		outputCounter++
 	}
 
-	fmt.Println("File splitting is complete.")
 	return nil
 }
 
@@ -213,14 +211,34 @@ func (s PieceSplitter) Split(file *os.File, fileNameCreater FileNameCreater) err
 		return err
 	}
 	var splitter FileSplitter
-	if chunk.R { 
+	if chunk.R {
 		splitter = PieceLineRoundRobinSplitter{chunk.N}
-	} else if chunk.L{
+	} else if chunk.L {
 		splitter = PieceLineSplitter{chunk.N}
 	} else {
 		splitter = PieceByteSplitter{chunk.N}
 	}
-	return splitter.Split(file, fileNameCreater)
+
+	err = splitter.Split(file, fileNameCreater)
+	if err != nil {
+		return err
+	}
+	if chunk.K > 0 {
+		fileName, err := fileNameCreater.Create(int(chunk.K) - 1)
+		if err != nil {
+			return err
+		}
+		file, err = os.Open(fileName)
+		defer file.Close()
+		if err != nil {
+			return err
+		}
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			fmt.Println(scanner.Text())
+		}
+	}
+	return nil
 
 }
 
@@ -290,7 +308,6 @@ func (s PieceByteSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
 		outputCounter++
 	}
 
-	fmt.Println("File splitting is complete.")
 	return nil
 }
 
@@ -399,7 +416,6 @@ func (s PieceLineSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
 		return fmt.Errorf(fileReadErrorMsg, err)
 	}
 
-	fmt.Println("File splitting is complete.")
 	return nil
 }
 
@@ -474,7 +490,6 @@ func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNa
 		return fmt.Errorf(fileReadErrorMsg, err)
 	}
 
-	fmt.Println("File splitting is complete.")
 	return nil
 }
 
@@ -504,7 +519,7 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 	parts := strings.Split(chunkStr, "/")
 	var err error
 	if len(parts) == 1 {
-		result.N, err = strconv.ParseInt(parts[0],10,64)
+		result.N, err = strconv.ParseInt(parts[0], 10, 64)
 		if err != nil {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
@@ -513,12 +528,12 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 			result.L = parts[0] == "l"
 			result.R = parts[0] == "r"
 		} else {
-			result.K, err = strconv.ParseInt(parts[0],10,64)
+			result.K, err = strconv.ParseInt(parts[0], 10, 64)
 			if err != nil {
 				return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 			}
 		}
-		result.N, err = strconv.ParseInt(parts[1],10,64)
+		result.N, err = strconv.ParseInt(parts[1], 10, 64)
 		if err != nil {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
@@ -527,24 +542,22 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 			result.L = parts[0] == "l"
 			result.R = parts[0] == "r"
 		} else {
-				return result, fmt.Errorf(chunkFormatInvalidErrorMsg)
+			return result, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
-		result.K, err = strconv.ParseInt(parts[1],10,64)
+		result.K, err = strconv.ParseInt(parts[1], 10, 64)
 		if err != nil {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
 
-		result.N, err = strconv.ParseInt(parts[2],10,64)
+		result.N, err = strconv.ParseInt(parts[2], 10, 64)
 		if err != nil {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
 	} else {
 		return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 	}
-	if result.N<result.K {
+	if result.N < result.K {
 		return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 	}
 	return result, nil
 }
-
-
