@@ -1131,7 +1131,8 @@ func TestPieceLineRoundRobinFileSplitterSplit713Lines(t *testing.T) {
 	}
 
 	testFileString := string(testFileContent)
-	if string(output1)+string(output2)+string(output3)+string(output4) == testFileString {		t.Fatal("output files have correct content. should be different.")
+	if string(output1)+string(output2)+string(output3)+string(output4) == testFileString {
+		t.Fatal("output files have correct content. should be different.")
 	}
 
 }
@@ -1167,4 +1168,107 @@ func TestPieceLineRoundRobinFileSplitterSplitWithEmptyFile(t *testing.T) {
 		t.Fatal("Incorrect number of output files.")
 	}
 
+}
+
+func TestParseCHUNK(t *testing.T) {
+	tests := []struct {
+		input string
+		want  chunk
+		err   error
+	}{
+		{
+			input: "10",
+			want: chunk{
+				N: 10,
+			},
+			err: nil,
+		},
+		{
+			input: "5/10",
+			want: chunk{
+				K: 5,
+				N: 10,
+			},
+			err: nil,
+		},
+		{
+			input: "l/10",
+			want: chunk{
+				L: true,
+				N: 10,
+			},
+			err: nil,
+		},
+		{
+			input: "r/10",
+			want: chunk{
+				R: true,
+				N: 10,
+			},
+			err: nil,
+		},
+		{
+			input: "l/5/10",
+			want: chunk{
+				L: true,
+				K: 5,
+				N: 10,
+			},
+			err: nil,
+		},
+		{
+			input: "r/5/10",
+			want: chunk{
+				R: true,
+				K: 5,
+				N: 10,
+			},
+			err: nil,
+		},
+		{
+			input: "l",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "20ss/ll",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "20/ll",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "5/10/20",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "r/a/20",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "r/10/a",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "l/5/10/20",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+	}
+
+	for _, test := range tests {
+		got, err := parseCHUNK(test.input)
+		if err != nil && err.Error() != test.err.Error() {
+			t.Errorf("parseCHUNK(%q) error = %v, wantErr %v", test.input, err, test.err)
+		}
+		if got != test.want {
+			t.Errorf("parseCHUNK(%q) = %v, want %v", test.input, got, test.want)
+		}
+	}
 }
