@@ -18,10 +18,12 @@ type LineSplitter struct {
 	separateLineNumber int64
 }
 
+const bufferSize = 1024 * 1024
+
 func (s LineSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
 
 	// Initialize a buffer to store file data temporarily.
-	buffer := make([]byte, 0)
+	buffer := make([]byte, 0, bufferSize)
 
 	// Line counter to keep track of lines read from the input file.
 	var lineCounter int64 = 0
@@ -98,27 +100,23 @@ func (s ByteSplitter) Split(file *os.File, fileNameCreater FileNameCreater) erro
 		return err
 	}
 
-	// 1GB memory limit (in bytes).
-	const maxMemoryLimit = 1 * 1024 * 1024 * 1024
-
-	// Buffer to store file data temporarily.
-	buffer := make([]byte, 0, maxMemoryLimit)
-
 	// Output file counter to keep track of split files.
 	outputCounter := 0
 
+	info ,err:=file.Stat()
+	if err!=nil{
+		return err
+	}
+	fileSize:=info.Size()
+	if fileSize==0{
+		return nil
+	}
+
 	// Read the input file and write to the output files.
 	for {
-		// Read separateByte of data from the input file.
-		n, err := file.Read(buffer[:separateByte])
 
 		if err != nil && err != io.EOF {
 			return fmt.Errorf(fileReadErrorMsg, err)
-		}
-
-		if n == 0 {
-			// Reached the end of the file, exit the loop.
-			break
 		}
 
 		// Create the output file.
@@ -132,14 +130,14 @@ func (s ByteSplitter) Split(file *os.File, fileNameCreater FileNameCreater) erro
 		}
 		defer outFile.Close()
 
-		// Write the buffer data to the output file.
-		_, err = outFile.Write(buffer[:n])
-		if err != nil {
-			return fmt.Errorf(fileWriteErrorMsg, err)
-		}
 
-		// Reset the buffer for the next output file.
-		buffer = buffer[:0]
+		fileEnd,err:=writeFileBy1KSize(file,outFile,outputFilePath,separateByte)
+		if err != nil {
+			return err
+		}
+		if fileEnd {
+			break
+		}
 
 		// Increment the output file counter.
 		outputCounter++
@@ -176,6 +174,42 @@ func separateByteStrToInt(separateByteStr string) (int, error) {
 	}
 	return 0, fmt.Errorf(separateByteInvalidErrorMsg)
 
+}
+
+func writeFileBy1KSize(file,outFile *os.File, outputputFilePath string, size int)( bool,error) {
+
+
+    // Create the buffer for reading the input file.
+    buffer := make([]byte, 1024)
+
+    // Read 1KB of data from the input file.
+    for size>0{
+		if size < 1024 {
+			buffer = make([]byte, size)
+		}
+        n, err := file.Read(buffer)
+        if err != nil && err != io.EOF {
+            return false,fmt.Errorf(fileReadErrorMsg, err)
+        }
+
+        if n == 0 {
+            // Reached the end of the file, exit the loop.
+            return true,nil
+        }
+
+        // Write the buffer data to the output file.
+        _, err = outFile.Write(buffer[:n])
+        if err != nil {
+            return false,fmt.Errorf(fileWriteErrorMsg, err)
+        }
+		size -= n
+
+
+        // Reset the buffer for the next output file.
+        buffer = make([]byte, 1024)
+    }
+
+    return false,nil
 }
 
 type PieceSplitter struct {
@@ -239,11 +273,9 @@ func (s PieceByteSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
 		splitSize++
 	}
 
-	// 1GB memory limit (in bytes).
-	const maxMemoryLimit = 1 * 1024 * 1024 * 1024
 
 	// Buffer to store file data temporarily.
-	buffer := make([]byte, 0, maxMemoryLimit)
+	buffer := make([]byte, 0, bufferSize)
 
 	// Output file counter to keep track of split files.
 	outputCounter := 0
@@ -298,7 +330,7 @@ func (s PieceLineSplitter) Split(file *os.File, fileNameCreater FileNameCreater)
 
 
 	// Initialize a buffer to store file data temporarily.
-	buffer := make([]byte, 0)
+	buffer := make([]byte, 0, bufferSize)
 	var outFile *os.File
 
 	// count file line number
@@ -395,7 +427,7 @@ type PieceLineRoundRobinSplitter struct {
 func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
 
 	// Initialize a buffer to store file data temporarily.
-	buffer := make([]byte, 0)
+	buffer := make([]byte, 0,bufferSize)
 
 	// count file line number
 	fileLineNum, err := countLinesByFile(file)
