@@ -27,16 +27,13 @@ func (s LineSplitter) Split(file *os.File, fileNameCreater FileNameCreater) erro
 	var lineCounter int64 = 0
 
 	var outFile *os.File
-
+	var outputFilePath string
+	var err error
 	// Output file counter to keep track of split files.
 	outputCounter := 0
 
 	// Read the input file line by line.
 	scanner := bufio.NewScanner(file)
-	outputFilePath, err := fileNameCreater.Create(outputCounter)
-	if err != nil {
-		return err
-	}
 	for scanner.Scan() {
 		line := scanner.Text()
 
@@ -61,7 +58,7 @@ func (s LineSplitter) Split(file *os.File, fileNameCreater FileNameCreater) erro
 		lineCounter++
 
 		// Add the line to the buffer.
-		err = writeFileBy1Line(outFile,line, outputFilePath, buffer)
+		err = writeFileBy1Line(outFile, line, buffer)
 		if err != nil {
 			return err
 		}
@@ -75,7 +72,7 @@ func (s LineSplitter) Split(file *os.File, fileNameCreater FileNameCreater) erro
 	return nil
 }
 
-func writeFileBy1Line(outFile *os.File, line, outputFilePath string, buffer []byte) error {
+func writeFileBy1Line(outFile *os.File, line string, buffer []byte) error {
 	buffer = append(buffer, line...)
 	buffer = append(buffer, '\n') // Add a newline character after each line.
 
@@ -422,48 +419,35 @@ func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNa
 	}
 
 	// Line counter to keep track of lines read from the input file.
-	var lineCounter int64 = 0
-
-	// Output file counter to keep track of split files.
-	outputCounter := 0
+	lineCounter := 0
 
 	scanner := bufio.NewScanner(file)
+	outFiles := make([]*os.File, 0, s.separatePieceNumber)
+
 	for scanner.Scan() {
+		if len(outFiles) == (lineCounter % int(s.separatePieceNumber)) {
+			outputFilePath, err := fileNameCreater.Create(lineCounter % int(s.separatePieceNumber))
+			if err != nil {
+				return err
+			}
+			outFile, err := os.OpenFile(outputFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+			if err != nil {
+				return fmt.Errorf(createFileErrorMsg, err)
+			}
+			outFiles = append(outFiles, outFile)
+			defer outFile.Close()
+		}
 		line := scanner.Text()
-
-		// Increase the line counter.
-		lineCounter++
-
-		// Add the line to the buffer.
-		buffer = append(buffer, line...)
-		buffer = append(buffer, '\n') // Add a newline character after each line.
 		// Create the output file.
-		outputFilePath, err := fileNameCreater.Create(outputCounter % int(s.separatePieceNumber))
+		outFile := outFiles[lineCounter%int(s.separatePieceNumber)]
+
+		err = writeFileBy1Line(outFile, line, buffer)
 		if err != nil {
 			return err
 		}
-		outFile, err := os.OpenFile(outputFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-		if err != nil {
-			return fmt.Errorf(createFileErrorMsg, err)
-		}
-
-		// Write the buffer data to the output file.
-		_, err = outFile.Write(buffer)
-		if err != nil {
-			return fmt.Errorf(fileWriteErrorMsg, err)
-		}
-
-		// Close the output file.
-		err = outFile.Close()
-		if err != nil {
-			return fmt.Errorf(fileWriteErrorMsg, err)
-		}
 
 		// Increment the output file counter.
-		outputCounter++
-
-		// Reset the buffer and line counter for the next output file.
-		buffer = buffer[:0]
+		lineCounter++
 
 	}
 
