@@ -634,6 +634,18 @@ func TestSeparateByteStrToInt(t *testing.T) {
 		{"1G", 1073741824, nil},
 		{"1gb", 1073741824, nil},
 		{"1GB", 1073741824, nil},
+		{"1t", 1099511627776, nil},
+		{"1T", 1099511627776, nil},
+		{"1tb", 1099511627776, nil},
+		{"1TB", 1099511627776, nil},
+		{"1p", 1125899906842624, nil},
+		{"1P", 1125899906842624, nil},
+		{"1pb", 1125899906842624, nil},
+		{"1PB", 1125899906842624, nil},
+		{"1e", 1152921504606846976, nil},
+		{"1E", 1152921504606846976, nil},
+		{"1eb", 1152921504606846976, nil},
+		{"1EB", 1152921504606846976, nil},
 		{"abc", 0, fmt.Errorf(separateByteInvalidErrorMsg)},
 	}
 
@@ -1429,6 +1441,16 @@ func TestParseCHUNK(t *testing.T) {
 		},
 		{
 			input: "r/0/20",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "r/-2/20",
+			want:  chunk{},
+			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
+		},
+		{
+			input: "r/4/-20",
 			want:  chunk{},
 			err:   fmt.Errorf(chunkFormatInvalidErrorMsg),
 		},

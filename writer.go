@@ -179,6 +179,12 @@ func separateByteStrToInt(separateByteStr string) (int, error) {
 			factor = 1024 * 1024
 		case "g":
 			factor = 1024 * 1024 * 1024
+		case "t":
+			factor = 1024 * 1024 * 1024 * 1024
+		case "p":
+			factor = 1024 * 1024 * 1024 * 1024 * 1024
+		case "e":
+			factor = 1024 * 1024 * 1024 * 1024 * 1024 * 1024
 		}
 
 		separateByte := number * factor
@@ -505,7 +511,7 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 			if err != nil {
 				return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 			}
-			if result.K == 0 {
+			if result.K <= 0 {
 				return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 			}
 		}
@@ -524,7 +530,7 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 		if err != nil {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
-		if result.K == 0 {
+		if result.K <= 0 {
 			return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 		}
 
@@ -538,7 +544,7 @@ func parseCHUNK(chunkStr string) (chunk, error) {
 	if result.N < result.K {
 		return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 	}
-	if result.N == 0 {
+	if result.N <= 0 {
 		return chunk{}, fmt.Errorf(chunkFormatInvalidErrorMsg)
 	}
 	return result, nil
