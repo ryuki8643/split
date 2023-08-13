@@ -270,6 +270,105 @@ func deleteOutputFiles() {
 	}
 }
 
+func TestByteFileSplitterSplit3072Byte(t *testing.T) {
+
+	defer deleteOutputFiles()
+	// Create a mock fileNameCreater.
+	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
+
+	// Create a LineFileSplitter instance.
+	splitter := ByteSplitter{"1k"}
+
+	// Create a test file
+	testFile, err := os.CreateTemp("", "testfile.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+		defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
+
+	// Write 2500 bytes to the file.
+	byteCount := 3072
+	data := make([]byte, byteCount)
+	for i := 0; i < byteCount; i++ {
+		data[i] = byte(i % 256)
+	}
+	_, err = testFile.Write(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Reset the file pointer to the beginning.
+	if _, err := testFile.Seek(0, 0); err != nil {
+		t.Fatal(err)
+	}
+
+	// Call the Split function with the mock fileNameCreater.
+	err = splitter.Split(testFile, fileNameCreater)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Check that the output files were created.
+	out1Stat, err := os.Stat("outputaa")
+	if os.IsNotExist(err) {
+		t.Fatal("outputaa file was not created.")
+	}
+	// Check that the output files have the correct size
+	if out1Stat.Size() != 1024 {
+		t.Fatal("outputaa file has incorrect size. Expected 1024, got ", out1Stat.Size())
+	}
+	out2Stat, err := os.Stat("outputab")
+	if os.IsNotExist(err) {
+		t.Fatal("outputab was not created.")
+	}
+	if out2Stat.Size() != 1024 {
+		t.Fatal("outputab file has incorrect size. Expected 1024, got ", out2Stat.Size())
+	}
+	out3Stat, err := os.Stat("outputac")
+	if os.IsNotExist(err) {
+		t.Fatal("outputac was not created.")
+	}
+	if out3Stat.Size() != 1024 {
+		t.Fatal("outputac file has incorrect size. Expected 452, got ", out3Stat.Size())
+	}
+
+	// Check that the output files have the correct lines
+	output1, err := os.ReadFile("outputaa")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	output2, err := os.ReadFile("outputab")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	output3, err := os.ReadFile("outputac")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Check that the output count is correct
+	if countFiles() != 3 {
+		t.Fatal("Incorrect number of output files.")
+	}
+
+	testFileContent, err := os.ReadFile(testFile.Name())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Check that the output files have the correct content
+	testFileString := string(testFileContent)
+	if string(output1)+string(output2)+string(output3) != testFileString {
+		t.Fatal("Incorrect output file content.")
+	}
+
+}
+
 func TestByteFileSplitterSplit2500Byte(t *testing.T) {
 
 	defer deleteOutputFiles()
