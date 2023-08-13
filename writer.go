@@ -14,11 +14,11 @@ type FileSplitter interface {
 	Split(file *os.File, fileNameCreater FileNameCreater) error
 }
 
-type LineFileSplitter struct {
-	separateLineNumber int
+type LineSplitter struct {
+	separateLineNumber int64
 }
 
-func (s LineFileSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
+func (s LineSplitter) Split(file *os.File, fileNameCreater FileNameCreater) error {
 
 	// Set the maximum memory limit to 1GB (in bytes).
 	const maxMemoryLimit = 1 * 1024 * 1024 * 1024
@@ -27,7 +27,7 @@ func (s LineFileSplitter) Split(file *os.File, fileNameCreater FileNameCreater) 
 	buffer := make([]byte, 0)
 
 	// Line counter to keep track of lines read from the input file.
-	lineCounter := 0
+	var lineCounter int64= 0
 
 	// Output file counter to keep track of split files.
 	outputCounter := 0
@@ -229,10 +229,11 @@ func (s PieceSplitter) Split(file *os.File, fileNameCreater FileNameCreater) err
 			return err
 		}
 		file, err = os.Open(fileName)
-		defer file.Close()
 		if err != nil {
 			return err
 		}
+		defer file.Close()
+
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
 			fmt.Println(scanner.Text())
@@ -495,6 +496,7 @@ func (s PieceLineRoundRobinSplitter) Split(file *os.File, fileNameCreater FileNa
 
 func countLinesByFile(file *os.File) (int64, error) {
 	fileForCountLine, err := os.Open(file.Name())
+	defer fileForCountLine.Close()
 	if err != nil {
 		return 0, fmt.Errorf(fileReadErrorMsg, err)
 

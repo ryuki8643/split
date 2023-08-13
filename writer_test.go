@@ -23,14 +23,17 @@ func TestLineFileSplitterSplit1000Lines(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	// Create a LineFileSplitter instance.
-	splitter := LineFileSplitter{1000}
+	splitter := LineSplitter{1000}
 
 	// Create a test file with 2000 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 	for i := 1; i <= 2007; i++ {
 		fmt.Fprintln(testFile, "line", i)
 	}
@@ -105,14 +108,17 @@ func TestLineFileSplitterSplit500Lines(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	// Create a LineFileSplitter instance.
-	splitter := LineFileSplitter{500}
+	splitter := LineSplitter{500}
 
 	// Create a test file with 2000 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 	for i := 1; i <= 716; i++ {
 		fmt.Fprintln(testFile, "line", i)
 	}
@@ -177,14 +183,17 @@ func TestLineFileSplitterSplitWithEmptyFile(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	// Create a LineFileSplitter instance.
-	splitter := LineFileSplitter{1000}
+	splitter := LineSplitter{1000}
 
 	// Create a test file with 0 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Reset the file pointer to the beginning.
 	if _, err := testFile.Seek(0, 0); err != nil {
@@ -261,7 +270,7 @@ func deleteOutputFiles() {
 	}
 }
 
-func TestByteFileSplitterSplit1kByte(t *testing.T) {
+func TestByteFileSplitterSplit2500Byte(t *testing.T) {
 
 	defer deleteOutputFiles()
 	// Create a mock fileNameCreater.
@@ -275,7 +284,10 @@ func TestByteFileSplitterSplit1kByte(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Write 2500 bytes to the file.
 	byteCount := 2500
@@ -371,7 +383,10 @@ func TestByteFileSplitterSplit1mByte(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Write 2500000 bytes to the file.
 	byteCount := 2500000
@@ -467,7 +482,10 @@ func TestByteFileSplitterCannotSplit0ByteFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Write 0 bytes to the file.
 	byteCount := 0
@@ -542,7 +560,10 @@ func TestBytePieceSplitter5000ByteFileto3file(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Write 5000 bytes to the file.
 	byteCount := 5000
@@ -638,7 +659,10 @@ func TestBytePieceSplitter3000ByteFileto3file(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Write 5000 bytes to the file.
 	byteCount := 3000
@@ -734,7 +758,10 @@ func TestBytePieceSplitter0ByteFileto0file(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Write 5000 bytes to the file.
 	byteCount := 0
@@ -778,7 +805,10 @@ func TestPieceLineFileSplitterSplit2007Lines(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 	for i := 1; i <= 2007; i++ {
 		fmt.Fprintln(testFile, "line", i)
 	}
@@ -860,7 +890,10 @@ func TestPieceLineFileSplitterSplit713Lines(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 	for i := 1; i <= 713; i++ {
 		fmt.Fprintln(testFile, "line", i)
 	}
@@ -952,7 +985,10 @@ func TestPieceLineFileSplitterSplitWithEmptyFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Reset the file pointer to the beginning.
 	if _, err := testFile.Seek(0, 0); err != nil {
@@ -985,7 +1021,10 @@ func TestPieceLineRoundRobinFileSplitterSplit2007Lines(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 	for i := 1; i <= 2007; i++ {
 		fmt.Fprintln(testFile, "line", i)
 	}
@@ -1067,7 +1106,10 @@ func TestPieceLineRoundRobinFileSplitterSplit713Lines(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 	for i := 1; i <= 713; i++ {
 		fmt.Fprintln(testFile, "line", i)
 	}
@@ -1159,7 +1201,10 @@ func TestPieceLineRoundRobinFileSplitterSplitWithEmptyFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Reset the file pointer to the beginning.
 	if _, err := testFile.Seek(0, 0); err != nil {
@@ -1320,7 +1365,10 @@ func TestPieceSplitterSelectPieceByteSplitter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Write 5000 bytes to the file.
 	byteCount := 5000
@@ -1416,7 +1464,10 @@ func TestPieceSplitterSelectPieceByteSplitterAndStdout(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 
 	// Write 5000 bytes to the file.
 	byteCount := 4999
@@ -1516,7 +1567,10 @@ func TestPieceSplitterSelectPieceLineSplitter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 	for i := 1; i <= 2007; i++ {
 		fmt.Fprintln(testFile, "line", i)
 	}
@@ -1598,7 +1652,10 @@ func TestPieceSplitterSelectPieceLineSplitterStdout3(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 	for i := 1; i <= 2005; i++ {
 		fmt.Fprintln(testFile, "line", i)
 	}
@@ -1685,7 +1742,10 @@ func TestPieceSplitterSelectPieceRoundRobinLineSplitter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 	for i := 1; i <= 2007; i++ {
 		fmt.Fprintln(testFile, "line", i)
 	}
@@ -1768,7 +1828,10 @@ func TestPieceSplitterSelectPieceRoundRobinLineSplitterStdout2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(testFile.Name())
+	defer func() {
+		testFile.Close()
+		os.Remove(testFile.Name())
+	}()
 	for i := 1; i <= 2005; i++ {
 		fmt.Fprintln(testFile, "line", i)
 	}
