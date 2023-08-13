@@ -31,11 +31,11 @@ func init() {
 func main() {
 	fileName, splitter, fileNameCreater, err := ParseFlags()
 	if err != nil {
-		fmt.Println( err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
-	file,err:=os.Open(fileName)
-	if err!=nil{
+	file, err := os.Open(fileName)
+	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
