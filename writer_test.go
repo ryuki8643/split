@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"testing"
 )
 
@@ -25,7 +24,7 @@ func TestLineFileSplitterSplit1000Lines(t *testing.T) {
 	// Create a LineFileSplitter instance.
 	splitter := LineSplitter{1000}
 
-	// Create a test file with 2000 lines.
+	// Create a test file with 2007 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
@@ -149,7 +148,7 @@ func TestLineFileSplitterSplit500Lines(t *testing.T) {
 	}
 
 	if countLinesByByte(output1) != 500 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+		t.Fatal("outputaa file has incorrect number of lines.Expected 500, got ", countLinesByByte(output1))
 	}
 
 	output2, err := os.ReadFile("outputab")
@@ -157,7 +156,7 @@ func TestLineFileSplitterSplit500Lines(t *testing.T) {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output2) != 216 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+		t.Fatal("outputab file has incorrect number of lines. Expected 216, got ", countLinesByByte(output2))
 	}
 
 	if countFiles() != 2 {
@@ -276,7 +275,7 @@ func TestByteFileSplitterSplit3072Byte(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a ByteSplitter instance.
 	splitter := ByteSplitter{"1k"}
 
 	// Create a test file
@@ -289,7 +288,7 @@ func TestByteFileSplitterSplit3072Byte(t *testing.T) {
 		os.Remove(testFile.Name())
 	}()
 
-	// Write 2500 bytes to the file.
+	// Write 3072 bytes to the file.
 	byteCount := 3072
 	data := make([]byte, byteCount)
 	for i := 0; i < byteCount; i++ {
@@ -332,7 +331,7 @@ func TestByteFileSplitterSplit3072Byte(t *testing.T) {
 		t.Fatal("outputac was not created.")
 	}
 	if out3Stat.Size() != 1024 {
-		t.Fatal("outputac file has incorrect size. Expected 452, got ", out3Stat.Size())
+		t.Fatal("outputac file has incorrect size. Expected 1024, got ", out3Stat.Size())
 	}
 
 	// Check that the output files have the correct lines
@@ -375,7 +374,7 @@ func TestByteFileSplitterSplit2500Byte(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a ByteSplitter instance.
 	splitter := ByteSplitter{"1k"}
 
 	// Create a test file
@@ -474,7 +473,7 @@ func TestByteFileSplitterSplit1mByte(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a ByteSplitter instance.
 	splitter := ByteSplitter{"1m"}
 
 	// Create a test file
@@ -651,8 +650,11 @@ func TestSeparateByteStrToInt(t *testing.T) {
 
 	for _, test := range tests {
 		result, err := separateByteStrToInt(test.input)
-		if result != test.expected || !reflect.DeepEqual(err, test.err) {
-			t.Errorf("separateByteStrToInt(%q) = (%v, %v), expected (%v, %v)", test.input, result, err, test.expected, test.err)
+		if result != test.expected {
+			t.Errorf("separateByteStrToInt(%q) returned %v, expected %v", test.input, result, test.expected)
+		}
+		if (err == nil && test.err != nil) || (err != nil && test.err == nil) || (err != nil && test.err != nil && err.Error() != test.err.Error()) {
+			t.Errorf("separateByteStrToInt(%q) returned error %v, expected %v", test.input, err, test.err)
 		}
 	}
 }
@@ -663,7 +665,7 @@ func TestBytePieceSplitter5000ByteFileto3file(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceByteSplitter instance.
 	splitter := PieceByteSplitter{3}
 
 	// Create a test file
@@ -705,21 +707,21 @@ func TestBytePieceSplitter5000ByteFileto3file(t *testing.T) {
 	}
 	// Check that the output files have the correct size
 	if out1Stat.Size() != 1667 {
-		t.Fatal("outputaa file has incorrect size. Expected 1024*1024, got ", out1Stat.Size())
+		t.Fatal("outputaa file has incorrect size. Expected 1667, got ", out1Stat.Size())
 	}
 	out2Stat, err := os.Stat("outputab")
 	if os.IsNotExist(err) {
 		t.Fatal("outputab was not created.")
 	}
 	if out2Stat.Size() != 1667 {
-		t.Fatal("outputab file has incorrect size. Expected 1024*1024, got ", out2Stat.Size())
+		t.Fatal("outputab file has incorrect size. Expected 1667, got ", out2Stat.Size())
 	}
 	out3Stat, err := os.Stat("outputac")
 	if os.IsNotExist(err) {
 		t.Fatal("outputac was not created.")
 	}
 	if out3Stat.Size() != 1666 {
-		t.Fatal("outputac file has incorrect size. Expected 402848, got ", out3Stat.Size())
+		t.Fatal("outputac file has incorrect size. Expected 1666, got ", out3Stat.Size())
 	}
 
 	// Check that the output files have the correct lines
@@ -762,7 +764,7 @@ func TestBytePieceSplitter3000ByteFileto3file(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceByteSplitter instance.
 	splitter := PieceByteSplitter{3}
 
 	// Create a test file
@@ -861,7 +863,7 @@ func TestBytePieceSplitter0ByteFileto0file(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceByteSplitter instance.
 	splitter := PieceByteSplitter{3}
 
 	// Create a test file
@@ -874,7 +876,7 @@ func TestBytePieceSplitter0ByteFileto0file(t *testing.T) {
 		os.Remove(testFile.Name())
 	}()
 
-	// Write 5000 bytes to the file.
+	// Write 0 bytes to the file.
 	byteCount := 0
 	data := make([]byte, byteCount)
 	for i := 0; i < byteCount; i++ {
@@ -908,10 +910,10 @@ func TestPieceLineFileSplitterSplit2007Lines(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceLineSplitter instance.
 	splitter := PieceLineSplitter{3}
 
-	// Create a test file with 2000 lines.
+	// Create a test file with 2007 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
@@ -953,7 +955,7 @@ func TestPieceLineFileSplitterSplit2007Lines(t *testing.T) {
 	}
 
 	if countLinesByByte(output1) != 669 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+		t.Fatal("outputaa file has incorrect number of lines.Expected 669, got ", countLinesByByte(output1))
 	}
 
 	output2, err := os.ReadFile("outputab")
@@ -961,14 +963,14 @@ func TestPieceLineFileSplitterSplit2007Lines(t *testing.T) {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output2) != 669 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+		t.Fatal("outputab file has incorrect number of lines. Expected 669, got ", countLinesByByte(output2))
 	}
 	output3, err := os.ReadFile("outputac")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output3) != 669 {
-		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
+		t.Fatal("outputac file has incorrect number of lines. Expected 669, got ", countLinesByByte(output3))
 	}
 
 	if countFiles() != 3 {
@@ -993,10 +995,10 @@ func TestPieceLineFileSplitterSplit713Lines(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceLineSplitter instance.
 	splitter := PieceLineSplitter{4}
 
-	// Create a test file with 2000 lines.
+	// Create a test file with 713 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
@@ -1041,7 +1043,7 @@ func TestPieceLineFileSplitterSplit713Lines(t *testing.T) {
 	}
 
 	if countLinesByByte(output1) != 179 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+		t.Fatal("outputaa file has incorrect number of lines.Expected 179, got ", countLinesByByte(output1))
 	}
 
 	output2, err := os.ReadFile("outputab")
@@ -1049,21 +1051,21 @@ func TestPieceLineFileSplitterSplit713Lines(t *testing.T) {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output2) != 179 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+		t.Fatal("outputab file has incorrect number of lines. Expected 179, got ", countLinesByByte(output2))
 	}
 	output3, err := os.ReadFile("outputac")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output3) != 179 {
-		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
+		t.Fatal("outputac file has incorrect number of lines. Expected 179, got ", countLinesByByte(output3))
 	}
 	output4, err := os.ReadFile("outputad")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output4) != 176 {
-		t.Fatal("outputad file has incorrect number of lines. Expected 7, got ", countLinesByByte(output4))
+		t.Fatal("outputad file has incorrect number of lines. Expected 176, got ", countLinesByByte(output4))
 	}
 
 	if countFiles() != 4 {
@@ -1088,7 +1090,7 @@ func TestPieceLineFileSplitterSplitWithEmptyFile(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceLineSplitter instance.
 	splitter := PieceLineSplitter{1000}
 
 	// Create a test file with 0 lines.
@@ -1124,10 +1126,10 @@ func TestPieceLineRoundRobinFileSplitterSplit2007Lines(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceLineRoundRobinSplitter instance.
 	splitter := PieceLineRoundRobinSplitter{3}
 
-	// Create a test file with 2000 lines.
+	// Create a test file with 2007 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
@@ -1169,7 +1171,7 @@ func TestPieceLineRoundRobinFileSplitterSplit2007Lines(t *testing.T) {
 	}
 
 	if countLinesByByte(output1) != 669 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+		t.Fatal("outputaa file has incorrect number of lines.Expected 669, got ", countLinesByByte(output1))
 	}
 
 	output2, err := os.ReadFile("outputab")
@@ -1177,14 +1179,14 @@ func TestPieceLineRoundRobinFileSplitterSplit2007Lines(t *testing.T) {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output2) != 669 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+		t.Fatal("outputab file has incorrect number of lines. Expected 669, got ", countLinesByByte(output2))
 	}
 	output3, err := os.ReadFile("outputac")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output3) != 669 {
-		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
+		t.Fatal("outputac file has incorrect number of lines. Expected 669, got ", countLinesByByte(output3))
 	}
 
 	if countFiles() != 3 {
@@ -1209,10 +1211,10 @@ func TestPieceLineRoundRobinFileSplitterSplit713Lines(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceLineRoundRobinSplitter instance.
 	splitter := PieceLineRoundRobinSplitter{4}
 
-	// Create a test file with 2000 lines.
+	// Create a test file with 713 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
@@ -1257,7 +1259,7 @@ func TestPieceLineRoundRobinFileSplitterSplit713Lines(t *testing.T) {
 	}
 
 	if countLinesByByte(output1) != 179 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+		t.Fatal("outputaa file has incorrect number of lines.Expected 179, got ", countLinesByByte(output1))
 	}
 
 	output2, err := os.ReadFile("outputab")
@@ -1265,21 +1267,21 @@ func TestPieceLineRoundRobinFileSplitterSplit713Lines(t *testing.T) {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output2) != 178 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+		t.Fatal("outputab file has incorrect number of lines. Expected 179, got ", countLinesByByte(output2))
 	}
 	output3, err := os.ReadFile("outputac")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output3) != 178 {
-		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
+		t.Fatal("outputac file has incorrect number of lines. Expected 178, got ", countLinesByByte(output3))
 	}
 	output4, err := os.ReadFile("outputad")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output4) != 178 {
-		t.Fatal("outputad file has incorrect number of lines. Expected 7, got ", countLinesByByte(output4))
+		t.Fatal("outputad file has incorrect number of lines. Expected 178, got ", countLinesByByte(output4))
 	}
 
 	if countFiles() != 4 {
@@ -1304,7 +1306,7 @@ func TestPieceLineRoundRobinFileSplitterSplitWithEmptyFile(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceLineRoundRobinSplitter instance.
 	splitter := PieceLineRoundRobinSplitter{1000}
 
 	// Create a test file with 0 lines.
@@ -1478,7 +1480,7 @@ func TestPieceSplitterSelectPieceByteSplitter(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	chunkStr := "3"
-	// Create a LineFileSplitter instance.
+	// Create a PieceSplitter instance.
 	splitter := PieceSplitter{chunkStr}
 
 	// Create a test file
@@ -1520,21 +1522,21 @@ func TestPieceSplitterSelectPieceByteSplitter(t *testing.T) {
 	}
 	// Check that the output files have the correct size
 	if out1Stat.Size() != 1667 {
-		t.Fatal("outputaa file has incorrect size. Expected 1024*1024, got ", out1Stat.Size())
+		t.Fatal("outputaa file has incorrect size. Expected 1667, got ", out1Stat.Size())
 	}
 	out2Stat, err := os.Stat("outputab")
 	if os.IsNotExist(err) {
 		t.Fatal("outputab was not created.")
 	}
 	if out2Stat.Size() != 1667 {
-		t.Fatal("outputab file has incorrect size. Expected 1024*1024, got ", out2Stat.Size())
+		t.Fatal("outputab file has incorrect size. Expected 1667, got ", out2Stat.Size())
 	}
 	out3Stat, err := os.Stat("outputac")
 	if os.IsNotExist(err) {
 		t.Fatal("outputac was not created.")
 	}
 	if out3Stat.Size() != 1666 {
-		t.Fatal("outputac file has incorrect size. Expected 402848, got ", out3Stat.Size())
+		t.Fatal("outputac file has incorrect size. Expected 1666, got ", out3Stat.Size())
 	}
 
 	// Check that the output files have the correct lines
@@ -1577,7 +1579,7 @@ func TestPieceSplitterSelectPieceByteSplitterAndStdout(t *testing.T) {
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
 	chunkStr := "1/3"
-	// Create a LineFileSplitter instance.
+	// Create a PieceSplitter instance.
 	splitter := PieceSplitter{chunkStr}
 
 	// Create a test file
@@ -1619,21 +1621,21 @@ func TestPieceSplitterSelectPieceByteSplitterAndStdout(t *testing.T) {
 	}
 	// Check that the output files have the correct size
 	if out1Stat.Size() != 1667 {
-		t.Fatal("outputaa file has incorrect size. Expected 1024*1024, got ", out1Stat.Size())
+		t.Fatal("outputaa file has incorrect size. Expected 1667, got ", out1Stat.Size())
 	}
 	out2Stat, err := os.Stat("outputab")
 	if os.IsNotExist(err) {
 		t.Fatal("outputab was not created.")
 	}
 	if out2Stat.Size() != 1667 {
-		t.Fatal("outputab file has incorrect size. Expected 1024*1024, got ", out2Stat.Size())
+		t.Fatal("outputab file has incorrect size. Expected 1667, got ", out2Stat.Size())
 	}
 	out3Stat, err := os.Stat("outputac")
 	if os.IsNotExist(err) {
 		t.Fatal("outputac was not created.")
 	}
 	if out3Stat.Size() != 1665 {
-		t.Fatal("outputac file has incorrect size. Expected 402848, got ", out3Stat.Size())
+		t.Fatal("outputac file has incorrect size. Expected 1665, got ", out3Stat.Size())
 	}
 
 	// Check that the output files have the correct lines
@@ -1680,10 +1682,10 @@ func TestPieceSplitterSelectPieceLineSplitter(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceSplitter instance.
 	splitter := PieceSplitter{"l/3"}
 
-	// Create a test file with 2000 lines.
+	// Create a test file with 2007 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
@@ -1725,7 +1727,7 @@ func TestPieceSplitterSelectPieceLineSplitter(t *testing.T) {
 	}
 
 	if countLinesByByte(output1) != 669 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+		t.Fatal("outputaa file has incorrect number of lines.Expected 669, got ", countLinesByByte(output1))
 	}
 
 	output2, err := os.ReadFile("outputab")
@@ -1733,14 +1735,14 @@ func TestPieceSplitterSelectPieceLineSplitter(t *testing.T) {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output2) != 669 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+		t.Fatal("outputab file has incorrect number of lines. Expected 669, got ", countLinesByByte(output2))
 	}
 	output3, err := os.ReadFile("outputac")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output3) != 669 {
-		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
+		t.Fatal("outputac file has incorrect number of lines. Expected 669, got ", countLinesByByte(output3))
 	}
 
 	if countFiles() != 3 {
@@ -1765,10 +1767,10 @@ func TestPieceSplitterSelectPieceLineSplitterStdout3(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceSplitter instance.
 	splitter := PieceSplitter{"l/3/3"}
 
-	// Create a test file with 2000 lines.
+	// Create a test file with 2005 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
@@ -1810,7 +1812,7 @@ func TestPieceSplitterSelectPieceLineSplitterStdout3(t *testing.T) {
 	}
 
 	if countLinesByByte(output1) != 669 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+		t.Fatal("outputaa file has incorrect number of lines.Expected 669, got ", countLinesByByte(output1))
 	}
 
 	output2, err := os.ReadFile("outputab")
@@ -1818,14 +1820,14 @@ func TestPieceSplitterSelectPieceLineSplitterStdout3(t *testing.T) {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output2) != 669 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+		t.Fatal("outputab file has incorrect number of lines. Expected 669, got ", countLinesByByte(output2))
 	}
 	output3, err := os.ReadFile("outputac")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output3) != 667 {
-		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
+		t.Fatal("outputac file has incorrect number of lines. Expected 667, got ", countLinesByByte(output3))
 	}
 
 	if countFiles() != 3 {
@@ -1855,10 +1857,10 @@ func TestPieceSplitterSelectPieceRoundRobinLineSplitter(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceSplitter instance.
 	splitter := PieceSplitter{"r/3"}
 
-	// Create a test file with 2000 lines.
+	// Create a test file with 2007 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
@@ -1900,7 +1902,7 @@ func TestPieceSplitterSelectPieceRoundRobinLineSplitter(t *testing.T) {
 	}
 
 	if countLinesByByte(output1) != 669 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+		t.Fatal("outputaa file has incorrect number of lines.Expected 669, got ", countLinesByByte(output1))
 	}
 
 	output2, err := os.ReadFile("outputab")
@@ -1908,14 +1910,14 @@ func TestPieceSplitterSelectPieceRoundRobinLineSplitter(t *testing.T) {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output2) != 669 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+		t.Fatal("outputab file has incorrect number of lines. Expected 669, got ", countLinesByByte(output2))
 	}
 	output3, err := os.ReadFile("outputac")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output3) != 669 {
-		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
+		t.Fatal("outputac file has incorrect number of lines. Expected 669, got ", countLinesByByte(output3))
 	}
 
 	if countFiles() != 3 {
@@ -1941,10 +1943,10 @@ func TestPieceSplitterSelectPieceRoundRobinLineSplitterStdout2(t *testing.T) {
 	// Create a mock fileNameCreater.
 	fileNameCreater := AlphabetFileNameCreater{digit: 2, prefix: "output"}
 
-	// Create a LineFileSplitter instance.
+	// Create a PieceSplitter instance.
 	splitter := PieceSplitter{"r/2/3"}
 
-	// Create a test file with 2000 lines.
+	// Create a test file with 2005 lines.
 	testFile, err := os.CreateTemp("", "testfile.txt")
 	if err != nil {
 		t.Fatal(err)
@@ -1986,7 +1988,7 @@ func TestPieceSplitterSelectPieceRoundRobinLineSplitterStdout2(t *testing.T) {
 	}
 
 	if countLinesByByte(output1) != 669 {
-		t.Fatal("outputaa file has incorrect number of lines.Expected 1000, got ", countLinesByByte(output1))
+		t.Fatal("outputaa file has incorrect number of lines.Expected 669, got ", countLinesByByte(output1))
 	}
 
 	output2, err := os.ReadFile("outputab")
@@ -1994,14 +1996,14 @@ func TestPieceSplitterSelectPieceRoundRobinLineSplitterStdout2(t *testing.T) {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output2) != 668 {
-		t.Fatal("outputab file has incorrect number of lines. Expected 1000, got ", countLinesByByte(output2))
+		t.Fatal("outputab file has incorrect number of lines. Expected 668, got ", countLinesByByte(output2))
 	}
 	output3, err := os.ReadFile("outputac")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if countLinesByByte(output3) != 668 {
-		t.Fatal("outputac file has incorrect number of lines. Expected 7, got ", countLinesByByte(output3))
+		t.Fatal("outputac file has incorrect number of lines. Expected 668, got ", countLinesByByte(output3))
 	}
 
 	if countFiles() != 3 {
