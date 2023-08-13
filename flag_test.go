@@ -10,10 +10,10 @@ import (
 func TestParseFlags(t *testing.T) {
 
 	var (
-		testlogfile string
+		testlogfile      string
 		testpaniconexit0 bool
-		testtimeout string
-		testrun string
+		testtimeout      string
+		testrun          string
 	)
 	// set up test cases
 	testCases := []struct {
@@ -93,10 +93,9 @@ func TestParseFlags(t *testing.T) {
 			err:  fmt.Errorf(tooManyFlagErrorMsg),
 		},
 		{
-			args: []string{"input.txt","prefix","l","100"},
-			err:  fmt.Errorf(invalidArgumentErrorMsg,4),
+			args: []string{"input.txt", "prefix", "l", "100"},
+			err:  fmt.Errorf(invalidArgumentErrorMsg, 4),
 		},
-		
 	}
 
 	// run test cases
@@ -123,5 +122,3 @@ func TestParseFlags(t *testing.T) {
 		}
 	}
 }
-
-

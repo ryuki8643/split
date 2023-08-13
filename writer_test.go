@@ -30,7 +30,7 @@ func TestLineFileSplitterSplit1000Lines(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -115,7 +115,7 @@ func TestLineFileSplitterSplit500Lines(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -190,7 +190,7 @@ func TestLineFileSplitterSplitWithEmptyFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -284,7 +284,7 @@ func TestByteFileSplitterSplit3072Byte(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -383,7 +383,7 @@ func TestByteFileSplitterSplit2500Byte(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -482,7 +482,7 @@ func TestByteFileSplitterSplit1mByte(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -581,7 +581,7 @@ func TestByteFileSplitterCannotSplit0ByteFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -659,7 +659,7 @@ func TestBytePieceSplitter5000ByteFileto3file(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -758,7 +758,7 @@ func TestBytePieceSplitter3000ByteFileto3file(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -857,7 +857,7 @@ func TestBytePieceSplitter0ByteFileto0file(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -904,7 +904,7 @@ func TestPieceLineFileSplitterSplit2007Lines(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -989,7 +989,7 @@ func TestPieceLineFileSplitterSplit713Lines(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -1084,7 +1084,7 @@ func TestPieceLineFileSplitterSplitWithEmptyFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -1120,7 +1120,7 @@ func TestPieceLineRoundRobinFileSplitterSplit2007Lines(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -1205,7 +1205,7 @@ func TestPieceLineRoundRobinFileSplitterSplit713Lines(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -1300,7 +1300,7 @@ func TestPieceLineRoundRobinFileSplitterSplitWithEmptyFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -1464,7 +1464,7 @@ func TestPieceSplitterSelectPieceByteSplitter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -1563,7 +1563,7 @@ func TestPieceSplitterSelectPieceByteSplitterAndStdout(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -1666,7 +1666,7 @@ func TestPieceSplitterSelectPieceLineSplitter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -1751,7 +1751,7 @@ func TestPieceSplitterSelectPieceLineSplitterStdout3(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -1841,7 +1841,7 @@ func TestPieceSplitterSelectPieceRoundRobinLineSplitter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
@@ -1927,7 +1927,7 @@ func TestPieceSplitterSelectPieceRoundRobinLineSplitterStdout2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-		defer func() {
+	defer func() {
 		testFile.Close()
 		os.Remove(testFile.Name())
 	}()
